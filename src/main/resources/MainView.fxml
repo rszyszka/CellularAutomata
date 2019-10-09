@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" prefHeight="512.0" prefWidth="700.0"
+            xmlns="http://javafx.com/javafx/11.0.1" fx:controller="grainGrowth.controller.MainViewController">
+    <children>
+        <HBox>
+            <children>
+                <Canvas fx:id="canvas" height="900.0" width="1024.0"/>
+                <Separator orientation="VERTICAL" prefHeight="200.0"/>
+                <VBox prefHeight="512.0" prefWidth="200.0">
+                    <children>
+                        <Separator prefWidth="200.0">
+                            <VBox.margin>
+                                <Insets top="10.0"/>
+                            </VBox.margin>
+                        </Separator>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="21.0" prefWidth="283.0"
+                               text="Space Size" textAlignment="CENTER"/>
+                        <ScrollBar fx:id="xScrollBar" min="300.0" max="1000" value="300.0"/>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="21.0" prefWidth="200.0"
+                               textAlignment="CENTER" fx:id="xSize"/>
+                        <ScrollBar fx:id="yScrollBar" min="300.0" max="1000" value="300.0"/>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="21.0" prefWidth="200.0"
+                               textAlignment="CENTER" fx:id="ySize"/>
+                        <Button mnemonicParsing="false" onAction="#drawButtonAction" prefHeight="31.0" prefWidth="224.0"
+                                text="Draw">
+                            <VBox.margin>
+                                <Insets top="20.0"/>
+                            </VBox.margin>
+                        </Button>
+                        <Separator prefWidth="200.0">
+                            <VBox.margin>
+                                <Insets top="10.0"/>
+                            </VBox.margin>
+                        </Separator>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>
