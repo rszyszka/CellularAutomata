@@ -11,18 +11,20 @@ public class Space {
 
     private int maxCellId;
 
-
     private MooreNeighbourhood mooreNeighbourHood;
     private Cell[][] cells;
 
 
     public Space(int sizeX, int sizeY) {
+        mooreNeighbourHood = new MooreNeighbourhood(new AbsorbentBoundaryCondition(sizeX, sizeY));
+
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         cells = new Cell[sizeY][sizeX];
 
         initializeCells();
     }
+
 
     public Space(Space otherSpace) {
         sizeX = otherSpace.getSizeX();
@@ -39,7 +41,7 @@ public class Space {
     }
 
 
-    public void initializeCells() {
+    private void initializeCells() {
         maxCellId = 0;
         for (int i = 0; i < sizeY; i++) {
             for (int j = 0; j < sizeX; j++) {
@@ -68,9 +70,11 @@ public class Space {
         return maxCellId;
     }
 
+
     public void setMaxCellId(int maxCellId) {
         this.maxCellId = maxCellId;
     }
+
 
     public List<Cell> findNeighbours(Coords coords) {
         List<Coords> neighboursCoords = mooreNeighbourHood.findNeighboursCoords(coords);
@@ -83,13 +87,16 @@ public class Space {
         return neighbours;
     }
 
+
     private Cell getCell(Coords coords) {
         return cells[coords.getY()][coords.getX()];
     }
 
+
     public MooreNeighbourhood getMooreNeighbourHood() {
         return mooreNeighbourHood;
     }
+
 
     public void setMooreNeighbourHood(MooreNeighbourhood mooreNeighbourHood) {
         this.mooreNeighbourHood = mooreNeighbourHood;

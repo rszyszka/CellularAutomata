@@ -11,7 +11,6 @@ public class NucleonsGeneratorTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         space = new Space(300, 300);
-        space.initializeCells();
     }
 
     public void testPutNucleonsRandomly() {

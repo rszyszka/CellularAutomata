@@ -21,12 +21,22 @@ public class GrainGrowthTest extends TestCase {
     }
 
 
+    public void testSimulateGrainGrowth() {
+        space.getCells()[5][5].setId(1);
+        space.getCells()[9][9].setId(2);
+        grainGrowth = new GrainGrowth(space);
+
+        assertEquals(2, determineCounter());
+
+        grainGrowth.simulateGrainGrowth();
+
+        assertEquals(100, determineCounter());
+    }
+
+
     public void testPerformStep() {
-        AbsorbentBoundaryCondition boundaryCondition = new AbsorbentBoundaryCondition(sizeX, sizeY);
-        MooreNeighbourhood mooreNeighbourhood = new MooreNeighbourhood(boundaryCondition);
         space.getCells()[5][5].setId(1);
         grainGrowth = new GrainGrowth(space);
-        grainGrowth.getSpace().setMooreNeighbourHood(mooreNeighbourhood);
 
         assertEquals(1, determineCounter());
 

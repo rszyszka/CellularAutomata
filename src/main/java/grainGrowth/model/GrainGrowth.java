@@ -14,6 +14,8 @@ public class GrainGrowth {
     private Space space;
     private Space nextIterationSpace;
 
+    private boolean changed;
+
 
     public GrainGrowth(Space space) {
         this.space = space;
@@ -21,7 +23,16 @@ public class GrainGrowth {
     }
 
 
+    public void simulateGrainGrowth() {
+        changed = true;
+        while (changed) {
+            performIteration();
+        }
+    }
+
+
     public void performIteration() {
+        changed = false;
         Coords coords = new Coords(0, 0);
         for (int i = 0; i < space.getSizeY(); i++) {
             coords.setY(i);
@@ -34,6 +45,7 @@ public class GrainGrowth {
                     int newId = getMostFrequentId(neighbours);
                     if (newId != 0) {
                         nextIterationSpace.getCells()[i][j].setId(newId);
+                        changed = true;
                     }
                 }
             }
