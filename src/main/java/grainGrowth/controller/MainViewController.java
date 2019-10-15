@@ -1,17 +1,28 @@
 package grainGrowth.controller;
 
 import grainGrowth.model.GrainGrowth;
+import grainGrowth.model.core.InputOutputUtils;
 import grainGrowth.model.core.NucleonsGenerator;
 import grainGrowth.model.core.Space;
+import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import org.apache.commons.io.FilenameUtils;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +49,8 @@ public class MainViewController implements Initializable {
     private Button generateNucleonsButton;
     @FXML
     private Button performGrainGrowthButton;
+    @FXML
+    private MenuBar menuBar;
 
 
     private int xSize;
@@ -124,7 +137,7 @@ public class MainViewController implements Initializable {
     }
 
 
-    public void draw() {
+    void draw() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         for (int i = 0; i < ySize; i++) {
             for (int j = 0; j < xSize; j++) {
@@ -151,6 +164,7 @@ public class MainViewController implements Initializable {
         initializeButton.setDisable(true);
         generateNucleonsButton.setDisable(true);
         performGrainGrowthButton.setDisable(true);
+        menuBar.setDisable(true);
     }
 
 
@@ -161,6 +175,44 @@ public class MainViewController implements Initializable {
         initializeButton.setDisable(false);
         generateNucleonsButton.setDisable(false);
         performGrainGrowthButton.setDisable(false);
+        menuBar.setDisable(false);
+    }
+
+
+    public void loadSpace() {
+    }
+
+
+    public void saveSpace() {
+
+        WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save space");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("TXT", "*.txt"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("JPEG", "*.jpeg")
+        );
+        fileChooser.setInitialDirectory(new File("."));
+
+        File file = fileChooser.showSaveDialog(canvas.getScene().getWindow());
+        if (file != null) {
+            String extension = FilenameUtils.getExtension(file.getName());
+            try {
+                if ("txt".equals(extension)) {
+                    InputOutputUtils.saveSpace(space, file);
+                } else {
+                    ImageIO.write(SwingFXUtils.fromFXImage(image, null), extension, file);
+                }
+            } catch (IOException ignored) {
+            }
+        }
+    }
+
+
+    public void closeApp() {
+        Platform.exit();
     }
 
 }

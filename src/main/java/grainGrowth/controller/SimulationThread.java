@@ -1,8 +1,8 @@
 package grainGrowth.controller;
 
-
 import grainGrowth.model.GrainGrowth;
 import javafx.application.Platform;
+
 
 public class SimulationThread extends Thread {
 
@@ -19,9 +19,7 @@ public class SimulationThread extends Thread {
     @Override
     public void run() {
         grainGrowth.simulateGrainGrowth();
-        Platform.runLater(() -> {
-            controller.draw();
-        });
+        Platform.runLater(() -> controller.draw());
     }
 
 }
