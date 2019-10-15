@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
@@ -31,6 +32,14 @@ public class MainViewController implements Initializable {
     private TextField nucleonsNumberTextField;
     @FXML
     private Label spaceSizeLabel;
+    @FXML
+    private Button initializeButton;
+    @FXML
+    private Button generateNucleonsButton;
+    @FXML
+    private Button performGrainGrowthButton;
+
+
     private int xSize;
     private int ySize;
     private int nucleonsNumber;
@@ -64,9 +73,10 @@ public class MainViewController implements Initializable {
 
 
     public void performGrainGrowth() {
+        disableNodes();
         GrainGrowth grainGrowth = new GrainGrowth(space);
-        grainGrowth.simulateGrainGrowth();
-        draw();
+        SimulationThread simulationThread = new SimulationThread(this, grainGrowth);
+        simulationThread.start();
     }
 
 
@@ -80,7 +90,7 @@ public class MainViewController implements Initializable {
 
         xSizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                if (!xSizeTextField.getText().matches("[1-9][0-9]{0,3}")) {
+                if (!xSizeTextField.getText().matches("[1-9][0-9]{0,2}|1000")) {
                     xSizeTextField.setText(String.valueOf(xSize));
                 }
             }
@@ -88,7 +98,7 @@ public class MainViewController implements Initializable {
 
         ySizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                if (!ySizeTextField.getText().matches("[1-9][0-9]{0,3}")) {
+                if (!ySizeTextField.getText().matches("[1-9][0-9]{0,2}|1000")) {
                     ySizeTextField.setText(String.valueOf(ySize));
                 }
             }
@@ -101,15 +111,20 @@ public class MainViewController implements Initializable {
 
         nucleonsNumberTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                if (!nucleonsNumberTextField.getText().matches("[1-9][0-9]{0,5}")) {
+                if (!nucleonsNumberTextField.getText().matches("[1-9][0-9]+")) {
                     nucleonsNumberTextField.setText(String.valueOf(nucleonsNumber));
+                } else {
+                    int newNucleonsNumber = Integer.parseInt(nucleonsNumberTextField.getText());
+                    if (newNucleonsNumber > xSize * ySize) {
+                        nucleonsNumberTextField.setText(String.valueOf(nucleonsNumber));
+                    }
                 }
             }
         });
     }
 
 
-    private void draw() {
+    public void draw() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         for (int i = 0; i < ySize; i++) {
             for (int j = 0; j < xSize; j++) {
@@ -125,6 +140,27 @@ public class MainViewController implements Initializable {
                 }
             }
         }
+        enableNodes();
+    }
+
+
+    private void disableNodes() {
+        nucleonsNumberTextField.setDisable(true);
+        xSizeTextField.setDisable(true);
+        ySizeTextField.setDisable(true);
+        initializeButton.setDisable(true);
+        generateNucleonsButton.setDisable(true);
+        performGrainGrowthButton.setDisable(true);
+    }
+
+
+    private void enableNodes() {
+        nucleonsNumberTextField.setDisable(false);
+        xSizeTextField.setDisable(false);
+        ySizeTextField.setDisable(false);
+        initializeButton.setDisable(false);
+        generateNucleonsButton.setDisable(false);
+        performGrainGrowthButton.setDisable(false);
     }
 
 }

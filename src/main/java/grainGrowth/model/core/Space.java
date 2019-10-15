@@ -88,7 +88,7 @@ public class Space {
     }
 
 
-    private Cell getCell(Coords coords) {
+    public Cell getCell(Coords coords) {
         return cells[coords.getY()][coords.getX()];
     }
 

@@ -38,7 +38,7 @@
                             </children>
                         </HBox>
                         <Button mnemonicParsing="false" onAction="#initializeEmptySpace" prefHeight="31.0"
-                                prefWidth="224.0" text="Initialize Empty Space">
+                                prefWidth="224.0" text="Initialize Empty Space" fx:id="initializeButton">
                             <VBox.margin>
                                 <Insets/>
                             </VBox.margin>
@@ -52,7 +52,7 @@
                         <Label alignment="CENTER" prefHeight="18.0" prefWidth="306.0" text="Number of Nucleons"/>
                         <TextField fx:id="nucleonsNumberTextField" alignment="CENTER"/>
                         <Button mnemonicParsing="false" onAction="#generateNucleons" prefHeight="26.0" prefWidth="282.0"
-                                text="Generate">
+                                text="Generate" fx:id="generateNucleonsButton">
                             <VBox.margin>
                                 <Insets top="5.0"/>
                             </VBox.margin>
@@ -63,7 +63,7 @@
                             </VBox.margin>
                         </Separator>
                         <Button mnemonicParsing="false" onAction="#performGrainGrowth" prefHeight="26.0"
-                                prefWidth="288.0" text="Perform Grain Growth">
+                                prefWidth="288.0" text="Perform Grain Growth" fx:id="performGrainGrowthButton">
                             <VBox.margin>
                                 <Insets top="10.0"/>
                             </VBox.margin>
