@@ -172,9 +172,15 @@ public class MainViewController implements Initializable {
 
     private void generateNewColor(int id) {
         Random random = new Random();
-        Color newColor = Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble());
+        int red = random.nextInt(240) + 10;
+        int green = random.nextInt(240) + 10;
+        int blue = random.nextInt(240) + 10;
+        Color newColor = Color.rgb(red, green, blue);
         while (colorById.containsValue(newColor)) {
-            newColor = Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble());
+            red = random.nextInt(240) + 10;
+            green = random.nextInt(240) + 10;
+            blue = random.nextInt(240) + 10;
+            newColor = Color.rgb(red, green, blue);
         }
         colorById.put(id, newColor);
     }
