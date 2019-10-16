@@ -31,7 +31,7 @@ public class GrainGrowth {
     }
 
 
-    public void performIteration() {
+    void performIteration() {
         changed = false;
         Coords coords = new Coords(0, 0);
         for (int i = 0; i < space.getSizeY(); i++) {
@@ -94,7 +94,7 @@ public class GrainGrowth {
     }
 
 
-    public Space getSpace() {
+    Space getSpace() {
         return space;
     }
 

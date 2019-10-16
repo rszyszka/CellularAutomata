@@ -93,7 +93,7 @@ public class Space {
     }
 
 
-    private MooreNeighbourhood getMooreNeighbourHood() {
+    MooreNeighbourhood getMooreNeighbourHood() {
         return mooreNeighbourHood;
     }
 
