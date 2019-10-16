@@ -52,27 +52,33 @@ public class MainViewController implements Initializable {
     @FXML
     private MenuBar menuBar;
 
-
     private int xSize;
     private int ySize;
     private int nucleonsNumber;
+    private final Map<Integer, Color> colorById = new HashMap<>();
     private Space space;
-
-    private Map<Integer, Color> colorById;
-
+    private FileChooser fileChooser;
 
     public void initializeEmptySpace() {
         xSize = Integer.parseInt(xSizeTextField.getText());
         ySize = Integer.parseInt(ySizeTextField.getText());
 
         space = new Space(xSize, ySize);
-        colorById = new HashMap<>();
 
+        adjustNodesToSpaceSize();
+
+        clearCanvas();
+    }
+
+
+    private void adjustNodesToSpaceSize() {
         spaceSizeLabel.setText("X Size: " + xSize + "  Y Size: " + ySize);
-
         canvas.setWidth(xSize * cellSize);
         canvas.setHeight(ySize * cellSize);
+    }
 
+
+    private void clearCanvas() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
@@ -95,6 +101,13 @@ public class MainViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("TXT", "*.txt"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
+        fileChooser.setInitialDirectory(new File("."));
+
         xSize = 400;
         ySize = 400;
 
@@ -144,9 +157,7 @@ public class MainViewController implements Initializable {
                 int id = space.getCells()[i][j].getId();
                 if (id != 0) {
                     if (!colorById.containsKey(id)) {
-                        Random random = new Random();
-                        Color newColor = Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble());
-                        colorById.put(id, newColor);
+                        generateNewColor(id);
                     }
                     gc.setFill(colorById.get(id));
                     gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
@@ -154,6 +165,16 @@ public class MainViewController implements Initializable {
             }
         }
         enableNodes();
+    }
+
+
+    private void generateNewColor(int id) {
+        Random random = new Random();
+        Color newColor = Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble());
+        while (colorById.containsValue(newColor)) {
+            newColor = Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble());
+        }
+        colorById.put(id, newColor);
     }
 
 
@@ -180,21 +201,24 @@ public class MainViewController implements Initializable {
 
 
     public void loadSpace() {
+        fileChooser.setTitle("Load space");
+        File file = fileChooser.showOpenDialog(canvas.getScene().getWindow());
+        if (file != null) {
+            try {
+                space = InputOutputUtils.loadSpace(file);
+                xSize = space.getSizeX();
+                ySize = space.getSizeY();
+                adjustNodesToSpaceSize();
+                clearCanvas();
+                draw();
+            } catch (IOException ignored) {
+            }
+        }
     }
 
 
     public void saveSpace() {
-
-        WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
-        FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save space");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("TXT", "*.txt"),
-                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"),
-                new FileChooser.ExtensionFilter("JPEG", "*.jpeg")
-        );
-        fileChooser.setInitialDirectory(new File("."));
 
         File file = fileChooser.showSaveDialog(canvas.getScene().getWindow());
         if (file != null) {
@@ -203,6 +227,7 @@ public class MainViewController implements Initializable {
                 if ("txt".equals(extension)) {
                     InputOutputUtils.saveSpace(space, file);
                 } else {
+                    WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
                     ImageIO.write(SwingFXUtils.fromFXImage(image, null), extension, file);
                 }
             } catch (IOException ignored) {
