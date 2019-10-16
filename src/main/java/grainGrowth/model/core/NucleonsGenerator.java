@@ -11,7 +11,7 @@ public class NucleonsGenerator {
         List<Coords> freeCellCoords = determineFreeCellCords(space);
 
         int freeCellCoordsSize = freeCellCoords.size();
-        int firstIdToPut = space.getMaxCellId() + 1;
+        int firstIdToPut = space.determineMaxCellId() + 1;
 
         Random random = new Random();
 

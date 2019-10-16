@@ -9,8 +9,6 @@ public class Space {
     private final int sizeX;
     private final int sizeY;
 
-    private int maxCellId;
-
     private MooreNeighbourhood mooreNeighbourHood;
     private Cell[][] cells;
 
@@ -30,7 +28,6 @@ public class Space {
         sizeX = otherSpace.getSizeX();
         sizeY = otherSpace.getSizeY();
         cells = new Cell[sizeY][sizeX];
-        maxCellId = otherSpace.getMaxCellId();
         mooreNeighbourHood = otherSpace.getMooreNeighbourHood();
         for (int i = 0; i < sizeY; i++) {
             for (int j = 0; j < sizeX; j++) {
@@ -42,7 +39,6 @@ public class Space {
 
 
     private void initializeCells() {
-        maxCellId = 0;
         for (int i = 0; i < sizeY; i++) {
             for (int j = 0; j < sizeX; j++) {
                 cells[i][j] = new Cell();
@@ -66,13 +62,17 @@ public class Space {
     }
 
 
-    int getMaxCellId() {
-        return maxCellId;
-    }
-
-
-    public void setMaxCellId(int maxCellId) {
-        this.maxCellId = maxCellId;
+    int determineMaxCellId() {
+        int maxCellsId = 0;
+        for (int i = 0; i < sizeY; i++) {
+            for (int j = 0; j < sizeX; j++) {
+                int id = cells[i][j].getId();
+                if (id > maxCellsId) {
+                    maxCellsId = id;
+                }
+            }
+        }
+        return maxCellsId;
     }
 
 
@@ -88,12 +88,12 @@ public class Space {
     }
 
 
-    public Cell getCell(Coords coords) {
+    Cell getCell(Coords coords) {
         return cells[coords.getY()][coords.getX()];
     }
 
 
-    public MooreNeighbourhood getMooreNeighbourHood() {
+    private MooreNeighbourhood getMooreNeighbourHood() {
         return mooreNeighbourHood;
     }
 

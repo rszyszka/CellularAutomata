@@ -55,9 +55,11 @@ public class MainViewController implements Initializable {
     private int xSize;
     private int ySize;
     private int nucleonsNumber;
-    private final Map<Integer, Color> colorById = new HashMap<>();
     private Space space;
     private FileChooser fileChooser;
+
+    private final Map<Integer, Color> colorById = new HashMap<>();
+
 
     public void initializeEmptySpace() {
         xSize = Integer.parseInt(xSizeTextField.getText());
