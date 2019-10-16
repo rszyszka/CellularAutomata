@@ -2,8 +2,10 @@ package grainGrowth.controller;
 
 import grainGrowth.model.GrainGrowth;
 import grainGrowth.model.core.InputOutputUtils;
-import grainGrowth.model.core.NucleonsGenerator;
 import grainGrowth.model.core.Space;
+import grainGrowth.model.nucleonsGenerator.NucleonsGenerator;
+import grainGrowth.model.nucleonsGenerator.inclusions.InclusionType;
+import grainGrowth.model.nucleonsGenerator.inclusions.InclusionsGenerator;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -42,11 +44,17 @@ public class MainViewController implements Initializable {
     @FXML
     private TextField nucleonsNumberTextField;
     @FXML
+    private TextField inclusionsNumberTextField;
+    @FXML
+    private TextField inclusionSizeTextField;
+    @FXML
     private Label spaceSizeLabel;
     @FXML
     private Button initializeButton;
     @FXML
     private Button generateNucleonsButton;
+    @FXML
+    private Button generateInclusionsButton;
     @FXML
     private Button performGrainGrowthButton;
     @FXML
@@ -55,6 +63,8 @@ public class MainViewController implements Initializable {
     private int xSize;
     private int ySize;
     private int nucleonsNumber;
+    private int inclusionsNumber;
+    private int inclusionSize;
     private Space space;
     private FileChooser fileChooser;
 
@@ -93,6 +103,15 @@ public class MainViewController implements Initializable {
     }
 
 
+    public void generateInclusions() {
+        inclusionsNumber = Integer.parseInt(inclusionsNumberTextField.getText());
+        inclusionSize = Integer.parseInt(inclusionSizeTextField.getText());
+        InclusionsGenerator.TYPE = InclusionType.CIRCULAR;
+        NucleonsGenerator.putInclusionsRandomly(inclusionsNumber, inclusionSize, space);
+        draw();
+    }
+
+
     public void performGrainGrowth() {
         disableNodes();
         GrainGrowth grainGrowth = new GrainGrowth(space);
@@ -103,6 +122,8 @@ public class MainViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        colorById.put(-1, Color.BLACK);
+
         fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("TXT", "*.txt"),
@@ -135,16 +156,34 @@ public class MainViewController implements Initializable {
         initializeEmptySpace();
 
         nucleonsNumber = 100;
-        nucleonsNumberTextField.setText(String.valueOf(nucleonsNumber));
+        initializeGeneratorTextField(nucleonsNumberTextField, nucleonsNumber);
 
-        nucleonsNumberTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+        inclusionsNumber = 50;
+        initializeGeneratorTextField(inclusionsNumberTextField, inclusionsNumber);
+
+        inclusionSize = 5;
+        inclusionSizeTextField.setText(String.valueOf(inclusionSize));
+        inclusionSizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                if (!nucleonsNumberTextField.getText().matches("[1-9][0-9]+")) {
-                    nucleonsNumberTextField.setText(String.valueOf(nucleonsNumber));
+                if (!inclusionSizeTextField.getText().matches("[1-9][0-9]?")) {
+                    inclusionSizeTextField.setText(String.valueOf(inclusionSize));
+                }
+            }
+        });
+    }
+
+
+    private void initializeGeneratorTextField(TextField generatorTextField, int number) {
+        generatorTextField.setText(String.valueOf(number));
+
+        generatorTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!generatorTextField.getText().matches("[1-9][0-9]?+")) {
+                    generatorTextField.setText(String.valueOf(number));
                 } else {
-                    int newNucleonsNumber = Integer.parseInt(nucleonsNumberTextField.getText());
+                    int newNucleonsNumber = Integer.parseInt(generatorTextField.getText());
                     if (newNucleonsNumber > xSize * ySize) {
-                        nucleonsNumberTextField.setText(String.valueOf(nucleonsNumber));
+                        generatorTextField.setText(String.valueOf(number));
                     }
                 }
             }
@@ -188,10 +227,13 @@ public class MainViewController implements Initializable {
 
     private void disableNodes() {
         nucleonsNumberTextField.setDisable(true);
+        inclusionsNumberTextField.setDisable(true);
+        inclusionSizeTextField.setDisable(true);
         xSizeTextField.setDisable(true);
         ySizeTextField.setDisable(true);
         initializeButton.setDisable(true);
         generateNucleonsButton.setDisable(true);
+        generateInclusionsButton.setDisable(true);
         performGrainGrowthButton.setDisable(true);
         menuBar.setDisable(true);
     }
@@ -199,10 +241,13 @@ public class MainViewController implements Initializable {
 
     private void enableNodes() {
         nucleonsNumberTextField.setDisable(false);
+        inclusionsNumberTextField.setDisable(false);
+        inclusionSizeTextField.setDisable(false);
         xSizeTextField.setDisable(false);
         ySizeTextField.setDisable(false);
         initializeButton.setDisable(false);
         generateNucleonsButton.setDisable(false);
+        generateInclusionsButton.setDisable(false);
         performGrainGrowthButton.setDisable(false);
         menuBar.setDisable(false);
     }

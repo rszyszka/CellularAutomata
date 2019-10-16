@@ -1,5 +1,6 @@
 package grainGrowth.model.core;
 
+import grainGrowth.model.nucleonsGenerator.NucleonsGenerator;
 import junit.framework.TestCase;
 
 
@@ -9,7 +10,7 @@ public class NucleonsGeneratorTest extends TestCase {
 
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() {
         space = new Space(300, 300);
     }
 
@@ -36,7 +37,7 @@ public class NucleonsGeneratorTest extends TestCase {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void tearDown() {
         space = null;
     }
 

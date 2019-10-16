@@ -9,12 +9,14 @@ public class Space {
     private final int sizeX;
     private final int sizeY;
 
+    private AbsorbentBoundaryCondition boundaryCondition;
     private MooreNeighbourhood mooreNeighbourHood;
     private Cell[][] cells;
 
 
     public Space(int sizeX, int sizeY) {
-        mooreNeighbourHood = new MooreNeighbourhood(new AbsorbentBoundaryCondition(sizeX, sizeY));
+        boundaryCondition = new AbsorbentBoundaryCondition(sizeX, sizeY);
+        mooreNeighbourHood = new MooreNeighbourhood(boundaryCondition);
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -28,6 +30,7 @@ public class Space {
         sizeX = otherSpace.getSizeX();
         sizeY = otherSpace.getSizeY();
         cells = new Cell[sizeY][sizeX];
+        boundaryCondition = otherSpace.getBoundaryCondition();
         mooreNeighbourHood = otherSpace.getMooreNeighbourHood();
         for (int i = 0; i < sizeY; i++) {
             for (int j = 0; j < sizeX; j++) {
@@ -62,7 +65,7 @@ public class Space {
     }
 
 
-    int determineMaxCellId() {
+    public int determineMaxCellId() {
         int maxCellsId = 0;
         for (int i = 0; i < sizeY; i++) {
             for (int j = 0; j < sizeX; j++) {
@@ -88,12 +91,17 @@ public class Space {
     }
 
 
-    Cell getCell(Coords coords) {
+    public Cell getCell(Coords coords) {
         return cells[coords.getY()][coords.getX()];
     }
 
 
-    MooreNeighbourhood getMooreNeighbourHood() {
+    public AbsorbentBoundaryCondition getBoundaryCondition() {
+        return boundaryCondition;
+    }
+
+
+    public MooreNeighbourhood getMooreNeighbourHood() {
         return mooreNeighbourHood;
     }
 

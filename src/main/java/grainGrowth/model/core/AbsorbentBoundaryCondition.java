@@ -13,7 +13,7 @@ public class AbsorbentBoundaryCondition {
     }
 
 
-    void correctCoordsIfNeeded(Coords coords) {
+    public void correctCoordsIfNeeded(Coords coords) {
         if (coords.getX() < 0) {
             coords.setX(0);
         } else if (coords.getX() >= sizeX) {

@@ -67,6 +67,26 @@
                     <Insets top="10.0"/>
                 </VBox.margin>
             </Separator>
+            <Separator prefWidth="200.0">
+                <VBox.margin>
+                    <Insets top="10.0"/>
+                </VBox.margin>
+            </Separator>
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="306.0" text="Number of Inclusions"/>
+            <TextField fx:id="inclusionsNumberTextField" alignment="CENTER"/>
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="306.0" text="Inclusions Size"/>
+            <TextField fx:id="inclusionSizeTextField" alignment="CENTER"/>
+            <Button fx:id="generateInclusionsButton" mnemonicParsing="false" onAction="#generateInclusions"
+                    prefHeight="26.0" prefWidth="282.0" text="Generate">
+                <VBox.margin>
+                    <Insets top="5.0"/>
+                </VBox.margin>
+            </Button>
+            <Separator prefWidth="200.0">
+                <VBox.margin>
+                    <Insets top="10.0"/>
+                </VBox.margin>
+            </Separator>
             <Button fx:id="performGrainGrowthButton" mnemonicParsing="false" onAction="#performGrainGrowth"
                     prefHeight="26.0" prefWidth="288.0" text="Perform Grain Growth">
                 <VBox.margin>

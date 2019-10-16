@@ -1,18 +1,26 @@
-package grainGrowth.model.core;
+package grainGrowth.model.nucleonsGenerator;
+
+import grainGrowth.model.core.Cell;
+import grainGrowth.model.core.Coords;
+import grainGrowth.model.core.Space;
+import grainGrowth.model.nucleonsGenerator.inclusions.InclusionsGenerator;
 
 import java.util.*;
 
 
 public class NucleonsGenerator {
 
-    public static void putInclusionsRandomly(int number, Space space) {
+    public static void putInclusionsRandomly(int number, int size, Space space) {
         List<Coords> availableCellCords = determineFreeCellCords(space);
 
         if (availableCellCords.isEmpty()) {
             availableCellCords = determineGrainBoundaryCells(space);
         }
 
-        putInclusionsInAvailableCells(number, space, availableCellCords);
+        InclusionsGenerator generator = InclusionsGenerator.createInclusionsGenerator(number, size, space, availableCellCords);
+        if (generator != null) {
+            generator.putInclusionsInAvailableCells();
+        }
     }
 
 
@@ -64,17 +72,6 @@ public class NucleonsGenerator {
             }
         }
         return new ArrayList<>(grainBoundaryCells);
-    }
-
-
-    private static void putInclusionsInAvailableCells(int number, Space space, List<Coords> availableCellCords) {
-        int freeCellCoordsSize = availableCellCords.size();
-        Random random = new Random();
-
-        for (int i = 0; i < number && freeCellCoordsSize != 0; i++, freeCellCoordsSize--) {
-            Coords randomizedCoords = availableCellCords.remove(random.nextInt(freeCellCoordsSize));
-            space.getCell(randomizedCoords).setId(-1);
-        }
     }
 
 }

@@ -14,7 +14,7 @@ public class MooreNeighbourhood {
     }
 
 
-    List<Coords> findNeighboursCoords(Coords coords) {
+    public List<Coords> findNeighboursCoords(Coords coords) {
         int x = coords.getX();
         int y = coords.getY();
 
