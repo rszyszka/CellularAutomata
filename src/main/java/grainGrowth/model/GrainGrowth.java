@@ -59,7 +59,7 @@ public class GrainGrowth {
 
         for (Cell cell : neighbours) {
             int id = cell.getId();
-            if (id == 0) {
+            if (id == 0 || id == -1) {
                 continue;
             }
             if (amountByGrainId.containsKey(id)) {

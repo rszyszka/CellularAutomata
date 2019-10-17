@@ -53,7 +53,8 @@ public class InputOutputUtils {
 
     private static Space prepareSpaceBasedOnImage(BufferedImage image) {
         Map<Integer, Integer> idByRGB = new HashMap<>();
-        idByRGB.put(-1, 0);
+        idByRGB.put(-1, 0); //EMPTY
+        idByRGB.put(-16777216, -1); //BLACK
         int sizeX = image.getWidth() / 2;
         int sizeY = image.getHeight() / 2;
         Space newSpace = new Space(sizeX, sizeY);

@@ -76,6 +76,7 @@
             <TextField fx:id="inclusionsNumberTextField" alignment="CENTER"/>
             <Label alignment="CENTER" prefHeight="18.0" prefWidth="306.0" text="Inclusions Size"/>
             <TextField fx:id="inclusionSizeTextField" alignment="CENTER"/>
+            <ComboBox fx:id="inclusionTypeComboBox" prefWidth="500.0"/>
             <Button fx:id="generateInclusionsButton" mnemonicParsing="false" onAction="#generateInclusions"
                     prefHeight="26.0" prefWidth="282.0" text="Generate">
                 <VBox.margin>

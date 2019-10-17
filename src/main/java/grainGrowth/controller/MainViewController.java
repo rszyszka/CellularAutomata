@@ -7,16 +7,14 @@ import grainGrowth.model.nucleonsGenerator.NucleonsGenerator;
 import grainGrowth.model.nucleonsGenerator.inclusions.InclusionType;
 import grainGrowth.model.nucleonsGenerator.inclusions.InclusionsGenerator;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -59,6 +57,8 @@ public class MainViewController implements Initializable {
     private Button performGrainGrowthButton;
     @FXML
     private MenuBar menuBar;
+    @FXML
+    private ComboBox<InclusionType> inclusionTypeComboBox;
 
     private int xSize;
     private int ySize;
@@ -106,7 +106,7 @@ public class MainViewController implements Initializable {
     public void generateInclusions() {
         inclusionsNumber = Integer.parseInt(inclusionsNumberTextField.getText());
         inclusionSize = Integer.parseInt(inclusionSizeTextField.getText());
-        InclusionsGenerator.TYPE = InclusionType.CIRCULAR;
+        InclusionsGenerator.TYPE = inclusionTypeComboBox.getValue();
         NucleonsGenerator.putInclusionsRandomly(inclusionsNumber, inclusionSize, space);
         draw();
     }
@@ -122,6 +122,9 @@ public class MainViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        inclusionTypeComboBox.setItems(FXCollections.observableArrayList(InclusionType.values()));
+        inclusionTypeComboBox.getSelectionModel().selectFirst();
+
         colorById.put(-1, Color.BLACK);
 
         fileChooser = new FileChooser();
@@ -229,6 +232,7 @@ public class MainViewController implements Initializable {
         nucleonsNumberTextField.setDisable(true);
         inclusionsNumberTextField.setDisable(true);
         inclusionSizeTextField.setDisable(true);
+        inclusionTypeComboBox.setDisable(true);
         xSizeTextField.setDisable(true);
         ySizeTextField.setDisable(true);
         initializeButton.setDisable(true);
@@ -243,6 +247,7 @@ public class MainViewController implements Initializable {
         nucleonsNumberTextField.setDisable(false);
         inclusionsNumberTextField.setDisable(false);
         inclusionSizeTextField.setDisable(false);
+        inclusionTypeComboBox.setDisable(false);
         xSizeTextField.setDisable(false);
         ySizeTextField.setDisable(false);
         initializeButton.setDisable(false);
