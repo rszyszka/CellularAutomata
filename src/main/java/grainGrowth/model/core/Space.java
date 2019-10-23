@@ -80,13 +80,16 @@ public class Space {
 
 
     public List<Cell> findNeighbours(Coords coords) {
-        List<Coords> neighboursCoords = mooreNeighbourHood.findNeighboursCoords(coords);
+        return getNeighboursCells(mooreNeighbourHood.findNeighboursCoords(coords));
+    }
+
+
+    public List<Cell> getNeighboursCells(List<Coords> neighboursCoords) {
         List<Cell> neighbours = new LinkedList<>();
 
         for (Coords c : neighboursCoords) {
             neighbours.add(getCell(c));
         }
-
         return neighbours;
     }
 

@@ -11,10 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GrainGrowth {
 
-    private Space space;
-    private Space nextIterationSpace;
+    protected boolean changed;
 
-    private boolean changed;
+    protected Space space;
+    private Space nextIterationSpace;
 
 
     public GrainGrowth(Space space) {
@@ -38,15 +38,10 @@ public class GrainGrowth {
             coords.setY(i);
             for (int j = 0; j < space.getSizeX(); j++) {
                 coords.setX(j);
-                Cell oldCell = space.getCells()[i][j];
+                Cell oldCell = space.getCell(coords);
 
                 if (oldCell.getId() == 0) {
-                    List<Cell> neighbours = space.findNeighbours(coords);
-                    int newId = getMostFrequentId(neighbours);
-                    if (newId != 0) {
-                        nextIterationSpace.getCells()[i][j].setId(newId);
-                        changed = true;
-                    }
+                    performGrowthIfPossible(coords);
                 }
             }
         }
@@ -54,7 +49,14 @@ public class GrainGrowth {
     }
 
 
-    private int getMostFrequentId(List<Cell> neighbours) {
+    protected void performGrowthIfPossible(Coords coords) {
+        List<Cell> neighbours = space.findNeighbours(coords);
+        int newId = getMostFrequentId(neighbours);
+        setNewIdIfDifferentThanZero(coords, newId);
+    }
+
+
+    protected int getMostFrequentId(List<Cell> neighbours) {
         HashMap<Integer, Integer> amountByGrainId = new HashMap<>();
 
         for (Cell cell : neighbours) {
@@ -80,6 +82,14 @@ public class GrainGrowth {
         });
 
         return mostFrequentId.get();
+    }
+
+
+    protected void setNewIdIfDifferentThanZero(Coords coords, int newId) {
+        if (newId != 0) {
+            nextIterationSpace.getCell(coords).setId(newId);
+            changed = true;
+        }
     }
 
 
