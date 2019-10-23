@@ -13,9 +13,9 @@ public class ShapeControlGrainGrowth extends GrainGrowth {
     private double probabilityForForthRule;
 
 
-    public ShapeControlGrainGrowth(Space space) {
+    public ShapeControlGrainGrowth(Space space, double probabilityForForthRule) {
         super(space);
-        this.probabilityForForthRule = 0.5;
+        this.probabilityForForthRule = probabilityForForthRule;
     }
 
 
@@ -23,22 +23,22 @@ public class ShapeControlGrainGrowth extends GrainGrowth {
     protected void performGrowthIfPossible(Coords coords) {
         List<Cell> neighbours = space.findNeighbours(coords);
         int newId = getIdOccurringEqualToAmount(neighbours, 5);
-        setNewIdIfDifferentThanZero(coords, newId);
-        if (changed) {
+        boolean cellChanged = setNewIdIfDifferentThanZero(coords, newId);
+        if (cellChanged) {
             return;
         }
 
         neighbours = findNeighboursForSecondRule(coords);
         newId = getIdOccurringEqualToAmount(neighbours, 3);
-        setNewIdIfDifferentThanZero(coords, newId);
-        if (changed) {
+        cellChanged = setNewIdIfDifferentThanZero(coords, newId);
+        if (cellChanged) {
             return;
         }
 
         neighbours = findNeighboursForThirdsRule(coords);
         newId = getIdOccurringEqualToAmount(neighbours, 3);
-        setNewIdIfDifferentThanZero(coords, newId);
-        if (changed) {
+        cellChanged = setNewIdIfDifferentThanZero(coords, newId);
+        if (cellChanged) {
             return;
         }
 
@@ -80,11 +80,6 @@ public class ShapeControlGrainGrowth extends GrainGrowth {
         }
 
         return 0;
-    }
-
-
-    public void setProbabilityForForthRule(double probabilityForForthRule) {
-        this.probabilityForForthRule = probabilityForForthRule;
     }
 
 }

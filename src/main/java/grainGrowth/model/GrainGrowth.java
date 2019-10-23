@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GrainGrowth {
 
-    protected boolean changed;
+    private boolean changed;
 
     protected Space space;
     private Space nextIterationSpace;
@@ -85,11 +85,13 @@ public class GrainGrowth {
     }
 
 
-    protected void setNewIdIfDifferentThanZero(Coords coords, int newId) {
+    protected boolean setNewIdIfDifferentThanZero(Coords coords, int newId) {
         if (newId != 0) {
             nextIterationSpace.getCell(coords).setId(newId);
             changed = true;
+            return true;
         }
+        return false;
     }
 
 

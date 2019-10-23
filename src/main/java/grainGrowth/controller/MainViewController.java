@@ -1,6 +1,7 @@
 package grainGrowth.controller;
 
 import grainGrowth.model.GrainGrowth;
+import grainGrowth.model.ShapeControlGrainGrowth;
 import grainGrowth.model.core.InputOutputUtils;
 import grainGrowth.model.core.Space;
 import grainGrowth.model.nucleonsGenerator.NucleonsGenerator;
@@ -24,10 +25,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 public class MainViewController implements Initializable {
@@ -48,6 +46,10 @@ public class MainViewController implements Initializable {
     @FXML
     private Label spaceSizeLabel;
     @FXML
+    private Label probabilityLabel;
+    @FXML
+    private Label probabilityTitleLabel;
+    @FXML
     private Button initializeButton;
     @FXML
     private Button generateNucleonsButton;
@@ -58,7 +60,13 @@ public class MainViewController implements Initializable {
     @FXML
     private MenuBar menuBar;
     @FXML
+    private Slider probabilitySlider;
+    @FXML
     private ComboBox<InclusionType> inclusionTypeComboBox;
+    @FXML
+    private ComboBox<SimulationType> simulationTypeComboBox;
+
+    private List<Control> controls;
 
     private int xSize;
     private int ySize;
@@ -114,7 +122,14 @@ public class MainViewController implements Initializable {
 
     public void performGrainGrowth() {
         disableNodes();
-        GrainGrowth grainGrowth = new GrainGrowth(space);
+        GrainGrowth grainGrowth;
+        if (simulationTypeComboBox.getValue() == SimulationType.SHAPE_CONTROL_GRAIN_GROWTH) {
+            double probability = probabilitySlider.getValue();
+            grainGrowth = new ShapeControlGrainGrowth(space, probability);
+        } else {
+            grainGrowth = new GrainGrowth(space);
+        }
+
         SimulationThread simulationThread = new SimulationThread(this, grainGrowth);
         simulationThread.start();
     }
@@ -122,6 +137,8 @@ public class MainViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        addAllControlsToList();
+
         inclusionTypeComboBox.setItems(FXCollections.observableArrayList(InclusionType.values()));
         inclusionTypeComboBox.getSelectionModel().selectFirst();
 
@@ -173,6 +190,58 @@ public class MainViewController implements Initializable {
                 }
             }
         });
+
+        probabilityLabel.setText("50%");
+        probabilitySlider.setMax(1.0);
+        probabilitySlider.setMin(0.0);
+        probabilitySlider.adjustValue(0.5);
+        probabilitySlider.setBlockIncrement(0.01);
+        probabilitySlider.setMajorTickUnit(0.01);
+        probabilitySlider.setMinorTickCount(0);
+        probabilitySlider.setSnapToTicks(true);
+        probabilitySlider.valueProperty().addListener((observable, oldValue, newValue) ->
+                probabilityLabel.setText(Math.round(newValue.doubleValue() * 100) + "%")
+        );
+        setProbabilityControlsManagedProperty(false);
+
+        simulationTypeComboBox.setItems(FXCollections.observableArrayList(SimulationType.values()));
+        simulationTypeComboBox.getSelectionModel().selectFirst();
+        simulationTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == SimulationType.SHAPE_CONTROL_GRAIN_GROWTH) {
+                setProbabilityControlsManagedProperty(true);
+            } else {
+                setProbabilityControlsManagedProperty(false);
+            }
+        });
+
+        probabilitySlider.visibleProperty().bind(probabilitySlider.managedProperty());
+        probabilityLabel.visibleProperty().bind(probabilityLabel.managedProperty());
+        probabilityTitleLabel.visibleProperty().bind(probabilityTitleLabel.managedProperty());
+    }
+
+
+    private void setProbabilityControlsManagedProperty(boolean managed) {
+
+        probabilitySlider.setManaged(managed);
+        probabilityLabel.setManaged(managed);
+        probabilityTitleLabel.setManaged(managed);
+    }
+
+
+    private void addAllControlsToList() {
+        controls = new LinkedList<>();
+        controls.add(nucleonsNumberTextField);
+        controls.add(inclusionsNumberTextField);
+        controls.add(inclusionSizeTextField);
+        controls.add(inclusionTypeComboBox);
+        controls.add(xSizeTextField);
+        controls.add(ySizeTextField);
+        controls.add(initializeButton);
+        controls.add(generateNucleonsButton);
+        controls.add(generateInclusionsButton);
+        controls.add(performGrainGrowthButton);
+        controls.add(menuBar);
+        controls.add(simulationTypeComboBox);
     }
 
 
@@ -229,32 +298,16 @@ public class MainViewController implements Initializable {
 
 
     private void disableNodes() {
-        nucleonsNumberTextField.setDisable(true);
-        inclusionsNumberTextField.setDisable(true);
-        inclusionSizeTextField.setDisable(true);
-        inclusionTypeComboBox.setDisable(true);
-        xSizeTextField.setDisable(true);
-        ySizeTextField.setDisable(true);
-        initializeButton.setDisable(true);
-        generateNucleonsButton.setDisable(true);
-        generateInclusionsButton.setDisable(true);
-        performGrainGrowthButton.setDisable(true);
-        menuBar.setDisable(true);
+        for (Control control : controls) {
+            control.setDisable(true);
+        }
     }
 
 
     private void enableNodes() {
-        nucleonsNumberTextField.setDisable(false);
-        inclusionsNumberTextField.setDisable(false);
-        inclusionSizeTextField.setDisable(false);
-        inclusionTypeComboBox.setDisable(false);
-        xSizeTextField.setDisable(false);
-        ySizeTextField.setDisable(false);
-        initializeButton.setDisable(false);
-        generateNucleonsButton.setDisable(false);
-        generateInclusionsButton.setDisable(false);
-        performGrainGrowthButton.setDisable(false);
-        menuBar.setDisable(false);
+        for (Control control : controls) {
+            control.setDisable(false);
+        }
     }
 
 
