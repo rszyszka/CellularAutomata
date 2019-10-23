@@ -11,6 +11,10 @@ import java.util.Map;
 
 public class InputOutputUtils {
 
+    private static final int EMPTY = -1;
+    private static final int BLACK = -16777216;
+
+
     public static void saveSpace(Space space, File file) throws FileNotFoundException {
         PrintWriter writer = new PrintWriter(file);
         writer.println(space.getSizeX() + ";" + space.getSizeY());
@@ -53,8 +57,8 @@ public class InputOutputUtils {
 
     private static Space prepareSpaceBasedOnImage(BufferedImage image) {
         Map<Integer, Integer> idByRGB = new HashMap<>();
-        idByRGB.put(-1, 0); //EMPTY
-        idByRGB.put(-16777216, -1); //BLACK
+        idByRGB.put(EMPTY, 0);
+        idByRGB.put(BLACK, -1);
         int sizeX = image.getWidth() / 2;
         int sizeY = image.getHeight() / 2;
         Space newSpace = new Space(sizeX, sizeY);
