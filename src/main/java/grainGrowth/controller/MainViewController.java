@@ -2,8 +2,8 @@ package grainGrowth.controller;
 
 import grainGrowth.model.GrainGrowth;
 import grainGrowth.model.ShapeControlGrainGrowth;
-import grainGrowth.model.core.InputOutputUtils;
-import grainGrowth.model.core.Space;
+import grainGrowth.model.core.Cell;
+import grainGrowth.model.core.*;
 import grainGrowth.model.nucleonsGenerator.NucleonsGenerator;
 import grainGrowth.model.nucleonsGenerator.inclusions.InclusionType;
 import grainGrowth.model.nucleonsGenerator.inclusions.InclusionsGenerator;
@@ -17,6 +17,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
@@ -77,6 +78,8 @@ public class MainViewController implements Initializable {
     private FileChooser fileChooser;
 
     private final Map<Integer, Color> colorById = new HashMap<>();
+    private final Map<Integer, Color> backupColorById = new HashMap<>();
+    private final List<Grain> selectedGrains = new ArrayList<>();
 
 
     public void initializeEmptySpace() {
@@ -133,7 +136,6 @@ public class MainViewController implements Initializable {
         SimulationThread simulationThread = new SimulationThread(this, grainGrowth);
         simulationThread.start();
     }
-
 
 
     void draw() {
@@ -220,6 +222,20 @@ public class MainViewController implements Initializable {
     }
 
 
+    private void selectGrain(MouseEvent event) {
+        int x = (int) Math.ceil(event.getX() / cellSize);
+        int y = (int) Math.ceil(event.getY() / cellSize);
+        Coords coords = new Coords(x, y);
+
+        Cell cell = space.getCell(coords);
+        Grain grain = new Grain(space, cell);
+
+        colorById.put(cell.getId(), Color.RED);
+
+        draw();
+    }
+
+
     public void closeApp() {
         Platform.exit();
     }
@@ -238,6 +254,7 @@ public class MainViewController implements Initializable {
         initializeProbabilityControls();
         setProbabilityControlsManagedProperty(false);
         initializeSimulationTypeComboBox();
+        canvas.setOnMouseClicked(this::selectGrain);
     }
 
 
