@@ -43,9 +43,7 @@ public class ShapeControlGrainGrowth extends GrainGrowth {
         }
 
         if (Math.random() < probabilityForForthRule) {
-            neighbours = space.findNeighbours(coords);
-            newId = getMostFrequentId(neighbours);
-            setNewIdIfDifferentThanZero(coords, newId);
+            super.performGrowthIfPossible(coords);
         }
     }
 
