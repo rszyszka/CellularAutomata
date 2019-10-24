@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GrainGrowth {
 
-    private boolean changed;
+    protected boolean changed;
 
     protected Space space;
     private Space nextIterationSpace;

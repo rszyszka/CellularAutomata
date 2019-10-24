@@ -44,6 +44,8 @@ public class ShapeControlGrainGrowth extends GrainGrowth {
 
         if (Math.random() < probabilityForForthRule) {
             super.performGrowthIfPossible(coords);
+        } else {
+            changed = true;
         }
     }
 

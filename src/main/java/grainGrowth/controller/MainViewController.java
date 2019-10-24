@@ -135,133 +135,6 @@ public class MainViewController implements Initializable {
     }
 
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        addAllControlsToList();
-
-        inclusionTypeComboBox.setItems(FXCollections.observableArrayList(InclusionType.values()));
-        inclusionTypeComboBox.getSelectionModel().selectFirst();
-
-        colorById.put(-1, Color.BLACK);
-
-        fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("TXT", "*.txt"),
-                new FileChooser.ExtensionFilter("PNG", "*.png")
-        );
-        fileChooser.setInitialDirectory(new File("."));
-
-        xSize = 400;
-        ySize = 400;
-
-        xSizeTextField.setText(String.valueOf(xSize));
-        ySizeTextField.setText(String.valueOf(ySize));
-
-        xSizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                if (!xSizeTextField.getText().matches("[1-9][0-9]{0,2}|1000")) {
-                    xSizeTextField.setText(String.valueOf(xSize));
-                }
-            }
-        });
-
-        ySizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                if (!ySizeTextField.getText().matches("[1-9][0-9]{0,2}|1000")) {
-                    ySizeTextField.setText(String.valueOf(ySize));
-                }
-            }
-        });
-
-        initializeEmptySpace();
-
-        nucleonsNumber = 100;
-        initializeGeneratorTextField(nucleonsNumberTextField, nucleonsNumber);
-
-        inclusionsNumber = 50;
-        initializeGeneratorTextField(inclusionsNumberTextField, inclusionsNumber);
-
-        inclusionSize = 5;
-        inclusionSizeTextField.setText(String.valueOf(inclusionSize));
-        inclusionSizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                if (!inclusionSizeTextField.getText().matches("[1-9][0-9]?")) {
-                    inclusionSizeTextField.setText(String.valueOf(inclusionSize));
-                }
-            }
-        });
-
-        probabilityLabel.setText("50%");
-        probabilitySlider.setMax(1.0);
-        probabilitySlider.setMin(0.0);
-        probabilitySlider.adjustValue(0.5);
-        probabilitySlider.setBlockIncrement(0.01);
-        probabilitySlider.setMajorTickUnit(0.01);
-        probabilitySlider.setMinorTickCount(0);
-        probabilitySlider.setSnapToTicks(true);
-        probabilitySlider.valueProperty().addListener((observable, oldValue, newValue) ->
-                probabilityLabel.setText(Math.round(newValue.doubleValue() * 100) + "%")
-        );
-        setProbabilityControlsManagedProperty(false);
-
-        simulationTypeComboBox.setItems(FXCollections.observableArrayList(SimulationType.values()));
-        simulationTypeComboBox.getSelectionModel().selectFirst();
-        simulationTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == SimulationType.SHAPE_CONTROL_GRAIN_GROWTH) {
-                setProbabilityControlsManagedProperty(true);
-            } else {
-                setProbabilityControlsManagedProperty(false);
-            }
-        });
-
-        probabilitySlider.visibleProperty().bind(probabilitySlider.managedProperty());
-        probabilityLabel.visibleProperty().bind(probabilityLabel.managedProperty());
-        probabilityTitleLabel.visibleProperty().bind(probabilityTitleLabel.managedProperty());
-    }
-
-
-    private void setProbabilityControlsManagedProperty(boolean managed) {
-
-        probabilitySlider.setManaged(managed);
-        probabilityLabel.setManaged(managed);
-        probabilityTitleLabel.setManaged(managed);
-    }
-
-
-    private void addAllControlsToList() {
-        controls = new LinkedList<>();
-        controls.add(nucleonsNumberTextField);
-        controls.add(inclusionsNumberTextField);
-        controls.add(inclusionSizeTextField);
-        controls.add(inclusionTypeComboBox);
-        controls.add(xSizeTextField);
-        controls.add(ySizeTextField);
-        controls.add(initializeButton);
-        controls.add(generateNucleonsButton);
-        controls.add(generateInclusionsButton);
-        controls.add(performGrainGrowthButton);
-        controls.add(menuBar);
-        controls.add(simulationTypeComboBox);
-    }
-
-
-    private void initializeGeneratorTextField(TextField generatorTextField, int number) {
-        generatorTextField.setText(String.valueOf(number));
-
-        generatorTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                if (!generatorTextField.getText().matches("[1-9][0-9]?+")) {
-                    generatorTextField.setText(String.valueOf(number));
-                } else {
-                    int newNucleonsNumber = Integer.parseInt(generatorTextField.getText());
-                    if (newNucleonsNumber > xSize * ySize) {
-                        generatorTextField.setText(String.valueOf(number));
-                    }
-                }
-            }
-        });
-    }
-
 
     void draw() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -349,6 +222,151 @@ public class MainViewController implements Initializable {
 
     public void closeApp() {
         Platform.exit();
+    }
+
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        colorById.put(-1, Color.BLACK);
+        addAllControlsToList();
+        initializeFileChooser();
+        initializeSizeTextFields();
+        initializeEmptySpace();
+        nucleonsNumber = 100;
+        initializeGeneratorTextField(nucleonsNumberTextField, nucleonsNumber);
+        initializeInclusionControls();
+        initializeProbabilityControls();
+        setProbabilityControlsManagedProperty(false);
+        initializeSimulationTypeComboBox();
+    }
+
+
+    private void initializeSimulationTypeComboBox() {
+        simulationTypeComboBox.setItems(FXCollections.observableArrayList(SimulationType.values()));
+        simulationTypeComboBox.getSelectionModel().selectFirst();
+        simulationTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == SimulationType.SHAPE_CONTROL_GRAIN_GROWTH) {
+                setProbabilityControlsManagedProperty(true);
+            } else {
+                setProbabilityControlsManagedProperty(false);
+            }
+        });
+    }
+
+
+    private void initializeProbabilityControls() {
+        probabilityLabel.setText("50%");
+        probabilitySlider.setMax(1.0);
+        probabilitySlider.setMin(0.0);
+        probabilitySlider.adjustValue(0.5);
+        probabilitySlider.setBlockIncrement(0.01);
+        probabilitySlider.setMajorTickUnit(0.01);
+        probabilitySlider.setMinorTickCount(0);
+        probabilitySlider.setSnapToTicks(true);
+        probabilitySlider.valueProperty().addListener((observable, oldValue, newValue) ->
+                probabilityLabel.setText(Math.round(newValue.doubleValue() * 100) + "%")
+        );
+
+        probabilitySlider.visibleProperty().bind(probabilitySlider.managedProperty());
+        probabilityLabel.visibleProperty().bind(probabilityLabel.managedProperty());
+        probabilityTitleLabel.visibleProperty().bind(probabilityTitleLabel.managedProperty());
+    }
+
+
+    private void initializeInclusionControls() {
+        inclusionTypeComboBox.setItems(FXCollections.observableArrayList(InclusionType.values()));
+        inclusionTypeComboBox.getSelectionModel().selectFirst();
+
+        inclusionsNumber = 50;
+        initializeGeneratorTextField(inclusionsNumberTextField, inclusionsNumber);
+
+        inclusionSize = 5;
+        inclusionSizeTextField.setText(String.valueOf(inclusionSize));
+        inclusionSizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!inclusionSizeTextField.getText().matches("[1-9][0-9]?")) {
+                    inclusionSizeTextField.setText(String.valueOf(inclusionSize));
+                }
+            }
+        });
+    }
+
+
+    private void initializeSizeTextFields() {
+        xSize = 400;
+        ySize = 400;
+
+        xSizeTextField.setText(String.valueOf(xSize));
+        ySizeTextField.setText(String.valueOf(ySize));
+
+        xSizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!xSizeTextField.getText().matches("[1-9][0-9]{0,2}|1000")) {
+                    xSizeTextField.setText(String.valueOf(xSize));
+                }
+            }
+        });
+
+        ySizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!ySizeTextField.getText().matches("[1-9][0-9]{0,2}|1000")) {
+                    ySizeTextField.setText(String.valueOf(ySize));
+                }
+            }
+        });
+    }
+
+
+    private void initializeFileChooser() {
+        fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("TXT", "*.txt"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
+        fileChooser.setInitialDirectory(new File("."));
+    }
+
+
+    private void setProbabilityControlsManagedProperty(boolean managed) {
+
+        probabilitySlider.setManaged(managed);
+        probabilityLabel.setManaged(managed);
+        probabilityTitleLabel.setManaged(managed);
+    }
+
+
+    private void addAllControlsToList() {
+        controls = new LinkedList<>();
+        controls.add(nucleonsNumberTextField);
+        controls.add(inclusionsNumberTextField);
+        controls.add(inclusionSizeTextField);
+        controls.add(inclusionTypeComboBox);
+        controls.add(xSizeTextField);
+        controls.add(ySizeTextField);
+        controls.add(initializeButton);
+        controls.add(generateNucleonsButton);
+        controls.add(generateInclusionsButton);
+        controls.add(performGrainGrowthButton);
+        controls.add(menuBar);
+        controls.add(simulationTypeComboBox);
+    }
+
+
+    private void initializeGeneratorTextField(TextField generatorTextField, int number) {
+        generatorTextField.setText(String.valueOf(number));
+
+        generatorTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!generatorTextField.getText().matches("[1-9][0-9]?+")) {
+                    generatorTextField.setText(String.valueOf(number));
+                } else {
+                    int newNucleonsNumber = Integer.parseInt(generatorTextField.getText());
+                    if (newNucleonsNumber > xSize * ySize) {
+                        generatorTextField.setText(String.valueOf(number));
+                    }
+                }
+            }
+        });
     }
 
 }
