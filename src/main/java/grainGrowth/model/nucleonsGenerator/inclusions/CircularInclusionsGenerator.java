@@ -20,6 +20,11 @@ public class CircularInclusionsGenerator extends InclusionsGenerator {
     protected Set<Coords> determineCoordsSet(Coords randomizedCoords) {
         Set<Coords> coordsSet = new HashSet<>();
 
+        if (size == 1) {
+            coordsSet.add(new Coords(randomizedCoords.getX(), randomizedCoords.getY()));
+            return coordsSet;
+        }
+
         int modifier = size - 1;
 
         for (int y = randomizedCoords.getY() - modifier; y <= randomizedCoords.getY() + modifier; y++) {

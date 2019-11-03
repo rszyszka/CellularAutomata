@@ -2,8 +2,10 @@ package grainGrowth.controller;
 
 import grainGrowth.model.GrainGrowth;
 import grainGrowth.model.ShapeControlGrainGrowth;
-import grainGrowth.model.core.Cell;
-import grainGrowth.model.core.*;
+import grainGrowth.model.core.Coords;
+import grainGrowth.model.core.Grain;
+import grainGrowth.model.core.InputOutputUtils;
+import grainGrowth.model.core.Space;
 import grainGrowth.model.nucleonsGenerator.NucleonsGenerator;
 import grainGrowth.model.nucleonsGenerator.inclusions.InclusionType;
 import grainGrowth.model.nucleonsGenerator.inclusions.InclusionsGenerator;
@@ -79,7 +81,7 @@ public class MainViewController implements Initializable {
 
     private final Map<Integer, Color> colorById = new HashMap<>();
     private final Map<Integer, Color> backupColorById = new HashMap<>();
-    private final List<Grain> selectedGrains = new ArrayList<>();
+    private final Map<Integer, Grain> selectedGrainsById = new HashMap<>();
 
 
     public void initializeEmptySpace() {
@@ -225,12 +227,18 @@ public class MainViewController implements Initializable {
     private void selectGrain(MouseEvent event) {
         int x = (int) Math.ceil(event.getX() / cellSize);
         int y = (int) Math.ceil(event.getY() / cellSize);
-        Coords coords = new Coords(x, y);
 
-        Cell cell = space.getCell(coords);
-        Grain grain = new Grain(space, cell);
+        int id = space.getCell(new Coords(x, y)).getId();
 
-        colorById.put(cell.getId(), Color.RED);
+        if (selectedGrainsById.containsKey(id)) {
+            Color backupColor = backupColorById.remove(id);
+            colorById.replace(id, backupColor);
+            selectedGrainsById.remove(id);
+        } else {
+            Color currentColor = colorById.replace(id, Color.RED);
+            backupColorById.put(id, currentColor);
+            selectedGrainsById.put(id, new Grain(space, id));
+        }
 
         draw();
     }

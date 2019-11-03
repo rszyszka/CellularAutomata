@@ -45,6 +45,7 @@ public abstract class InclusionsGenerator {
 
             for (Coords c : coordsSet) {
                 space.getCell(c).setId(-1);
+                space.getCell(c).setGrowable(false);
             }
 
         }

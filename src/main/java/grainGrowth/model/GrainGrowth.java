@@ -61,7 +61,7 @@ public class GrainGrowth {
 
         for (Cell cell : neighbours) {
             int id = cell.getId();
-            if (id == 0 || id == -1) {
+            if (id == 0 || !cell.isGrowable()) {
                 continue;
             }
             if (amountByGrainId.containsKey(id)) {

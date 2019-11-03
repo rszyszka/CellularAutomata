@@ -10,8 +10,8 @@ public class Grain {
     private List<Cell> cells;
 
 
-    public Grain(Space space, Cell cell) {
-        this.id = cell.getId();
+    public Grain(Space space, int id) {
+        this.id = id;
         cells = new LinkedList<>();
         findGrainCells(space);
     }
