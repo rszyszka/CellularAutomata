@@ -353,7 +353,6 @@ public class MainViewController implements Initializable {
 
 
     private void setProbabilityControlsManagedProperty(boolean managed) {
-
         probabilitySlider.setManaged(managed);
         probabilityLabel.setManaged(managed);
         probabilityTitleLabel.setManaged(managed);
@@ -374,6 +373,7 @@ public class MainViewController implements Initializable {
         controls.add(performGrainGrowthButton);
         controls.add(menuBar);
         controls.add(simulationTypeComboBox);
+        controls.add(probabilitySlider);
     }
 
 

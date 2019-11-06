@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 
@@ -19,7 +20,8 @@ public class App extends Application {
         Parent mainNode = mainLoader.load();
         Scene scene = new Scene(mainNode);
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        primaryStage.setTitle("Multi Scale Modelling");
+        primaryStage.getIcons().add(new Image("/isim.png"));
         primaryStage.show();
     }
 
