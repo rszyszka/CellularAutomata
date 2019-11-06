@@ -25,7 +25,7 @@
             </ScrollPane>
         </VBox>
         <Separator orientation="VERTICAL"/>
-        <AnchorPane maxWidth="210.0" HBox.hgrow="ALWAYS">
+        <AnchorPane maxWidth="210.0">
             <ScrollPane layoutX="0.60003662109375" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <VBox alignment="CENTER" maxWidth="205.0">
