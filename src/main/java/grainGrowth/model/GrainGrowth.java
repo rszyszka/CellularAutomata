@@ -24,10 +24,14 @@ public class GrainGrowth {
 
 
     public void simulateGrainGrowth() {
+        space.resetBorderProperty();
+
         changed = true;
         while (changed) {
             performIteration();
         }
+
+        space.determineBorderCells();
     }
 
 

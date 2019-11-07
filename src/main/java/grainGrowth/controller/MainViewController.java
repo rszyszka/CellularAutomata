@@ -2,15 +2,15 @@ package grainGrowth.controller;
 
 import grainGrowth.model.GrainGrowth;
 import grainGrowth.model.ShapeControlGrainGrowth;
-import grainGrowth.model.core.Coords;
-import grainGrowth.model.core.Grain;
-import grainGrowth.model.core.InputOutputUtils;
-import grainGrowth.model.core.Space;
+import grainGrowth.model.core.Cell;
+import grainGrowth.model.core.*;
 import grainGrowth.model.nucleonsGenerator.NucleonsGenerator;
 import grainGrowth.model.nucleonsGenerator.inclusions.InclusionType;
 import grainGrowth.model.nucleonsGenerator.inclusions.InclusionsGenerator;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -68,6 +68,13 @@ public class MainViewController implements Initializable {
     private ComboBox<InclusionType> inclusionTypeComboBox;
     @FXML
     private ComboBox<SimulationType> simulationTypeComboBox;
+    private final ObservableMap<Integer, Grain> selectedGrainsById = FXCollections.observableHashMap();
+    @FXML
+    public Label numberOfGrainsSelected;
+    @FXML
+    public ComboBox<StructureType> structureTypeComboBox;
+    @FXML
+    public Button lockSelectedGrainsButton;
 
     private List<Control> controls;
 
@@ -80,9 +87,8 @@ public class MainViewController implements Initializable {
     private FileChooser fileChooser;
 
     private final Map<Integer, Color> colorById = new HashMap<>();
-    private final Map<Integer, Color> backupColorById = new HashMap<>();
-    private final Map<Integer, Grain> selectedGrainsById = new HashMap<>();
-
+    @FXML
+    public Button resetSelectionButton;
 
     public void initializeEmptySpace() {
         xSize = Integer.parseInt(xSizeTextField.getText());
@@ -91,6 +97,8 @@ public class MainViewController implements Initializable {
         space = new Space(xSize, ySize);
 
         adjustNodesToSpaceSize();
+
+        selectedGrainsById.clear();
 
         clearCanvas();
     }
@@ -151,6 +159,14 @@ public class MainViewController implements Initializable {
                     }
                     gc.setFill(colorById.get(id));
                     gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+
+                    if (selectedGrainsById.containsKey(id)) {
+                        gc.setFill(Color.rgb(255, 0, 0, 0.7));
+                        gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                    }
+
+                } else {
+                    gc.clearRect(j * cellSize, i * cellSize, cellSize, cellSize);
                 }
             }
         }
@@ -160,14 +176,14 @@ public class MainViewController implements Initializable {
 
     private void generateNewColor(int id) {
         Random random = new Random();
-        int red = random.nextInt(240) + 10;
-        int green = random.nextInt(240) + 10;
-        int blue = random.nextInt(240) + 10;
+        int red = random.nextInt(130) + 10;
+        int green = random.nextInt(230) + 10;
+        int blue = random.nextInt(230) + 10;
         Color newColor = Color.rgb(red, green, blue);
         while (colorById.containsValue(newColor)) {
-            red = random.nextInt(240) + 10;
-            green = random.nextInt(240) + 10;
-            blue = random.nextInt(240) + 10;
+            red = random.nextInt(130) + 10;
+            green = random.nextInt(230) + 10;
+            blue = random.nextInt(230) + 10;
             newColor = Color.rgb(red, green, blue);
         }
         colorById.put(id, newColor);
@@ -230,16 +246,73 @@ public class MainViewController implements Initializable {
 
         int id = space.getCell(new Coords(x, y)).getId();
 
-        if (selectedGrainsById.containsKey(id)) {
-            Color backupColor = backupColorById.remove(id);
-            colorById.replace(id, backupColor);
-            selectedGrainsById.remove(id);
-        } else {
-            Color currentColor = colorById.replace(id, Color.RED);
-            backupColorById.put(id, currentColor);
-            selectedGrainsById.put(id, new Grain(space, id));
+        if (id != 0) {
+            if (selectedGrainsById.containsKey(id)) {
+                selectedGrainsById.remove(id);
+            } else {
+                selectedGrainsById.put(id, new Grain(space, id, structureTypeComboBox.getValue()));
+            }
+
+            draw();
+        }
+    }
+
+
+    public void generateSubstructure() {
+        LinkedList<Integer> idsToDualPhaseConvertion = new LinkedList<>();
+        LinkedList<Integer> idsToInclusionsConvertion = new LinkedList<>();
+
+        for (Grain grain : selectedGrainsById.values()) {
+            if (grain.getStructureType() == StructureType.DUAL_PHASE) {
+                if (grain.getId() != -2) {
+                    idsToDualPhaseConvertion.add(grain.getId());
+                    grain.setId(-2);
+                }
+            }
+            if (grain.getStructureType() == StructureType.GRAIN_BOUNDARY) {
+                if (grain.getId() != -1) {
+                    idsToInclusionsConvertion.add(grain.getId());
+                    grain.setId(-1);
+                }
+                space.determineBorderCells();
+                grain.getCells().stream().filter(Cell::isGrainBoundary).forEach(cell -> {
+                    cell.setGrowable(false);
+                    cell.setId(grain.getId());
+                });
+                space.resetBorderProperty();
+            } else {
+                grain.getCells().forEach(cell -> {
+                    cell.setGrowable(false);
+                    cell.setId(grain.getId());
+                });
+            }
         }
 
+        if (!idsToDualPhaseConvertion.isEmpty()) {
+            selectedGrainsById.put(-2, new Grain(space, -2, StructureType.DUAL_PHASE));
+            idsToDualPhaseConvertion.forEach(selectedGrainsById::remove);
+        }
+        if (!idsToInclusionsConvertion.isEmpty()) {
+            selectedGrainsById.put(-1, new Grain(space, -1, StructureType.GRAIN_BOUNDARY));
+            idsToInclusionsConvertion.forEach(selectedGrainsById::remove);
+        }
+
+        for (int i = 0; i < space.getSizeY(); i++) {
+            for (int j = 0; j < space.getSizeX(); j++) {
+                Cell cell = space.getCells()[i][j];
+                if (selectedGrainsById.containsKey(cell.getId())) {
+                    continue;
+                }
+                cell.setGrowable(true);
+                cell.setId(0);
+            }
+        }
+        draw();
+    }
+
+
+    public void resetSelection() {
+        selectedGrainsById.clear();
         draw();
     }
 
@@ -252,6 +325,7 @@ public class MainViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         colorById.put(-1, Color.BLACK);
+        colorById.put(-2, Color.MAGENTA);
         addAllControlsToList();
         initializeFileChooser();
         initializeSizeTextFields();
@@ -262,6 +336,11 @@ public class MainViewController implements Initializable {
         initializeProbabilityControls();
         setProbabilityControlsManagedProperty(false);
         initializeSimulationTypeComboBox();
+        initializeStructureTypeComboBox();
+        numberOfGrainsSelected.setText("0");
+        selectedGrainsById.addListener((MapChangeListener<Integer, Grain>) change ->
+                numberOfGrainsSelected.setText(String.valueOf(selectedGrainsById.size()))
+        );
         canvas.setOnMouseClicked(this::selectGrain);
     }
 
@@ -276,6 +355,12 @@ public class MainViewController implements Initializable {
                 setProbabilityControlsManagedProperty(false);
             }
         });
+    }
+
+
+    private void initializeStructureTypeComboBox() {
+        structureTypeComboBox.setItems(FXCollections.observableArrayList(StructureType.values()));
+        structureTypeComboBox.getSelectionModel().selectFirst();
     }
 
 
@@ -374,6 +459,9 @@ public class MainViewController implements Initializable {
         controls.add(menuBar);
         controls.add(simulationTypeComboBox);
         controls.add(probabilitySlider);
+        controls.add(structureTypeComboBox);
+        controls.add(lockSelectedGrainsButton);
+        controls.add(resetSelectionButton);
     }
 
 

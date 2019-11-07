@@ -28,7 +28,7 @@ public class NucleonsGenerator {
         List<Coords> freeCellCoords = determineFreeCellCords(space);
 
         int freeCellCoordsSize = freeCellCoords.size();
-        int firstIdToPut = space.determineMaxCellId() + 1;
+        int firstIdToPut = space.findMaxCellId() + 1;
 
         Random random = new Random();
 
@@ -54,20 +54,16 @@ public class NucleonsGenerator {
     }
 
 
-    private static List<Coords> determineGrainBoundaryCells(Space space) {
+    public static List<Coords> determineGrainBoundaryCells(Space space) {
         Set<Coords> grainBoundaryCells = new HashSet<>();
         Coords coords = new Coords(0, 0);
         for (int i = 0; i < space.getSizeY(); i++) {
             coords.setY(i);
             for (int j = 0; j < space.getSizeX(); j++) {
                 coords.setX(j);
-                List<Coords> neighbours = space.getMooreNeighbourHood().findNeighboursCoords(coords);
-                for (Coords neighbourCoords : neighbours) {
-                    Cell cell = space.getCell(coords);
-                    if (cell.getId() != space.getCell(neighbourCoords).getId()) {
-                        grainBoundaryCells.add(neighbourCoords);
-                        grainBoundaryCells.add(coords);
-                    }
+                Cell cell = space.getCell(coords);
+                if (cell.isGrainBoundary()) {
+                    grainBoundaryCells.add(coords);
                 }
             }
         }

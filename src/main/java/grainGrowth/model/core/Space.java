@@ -65,7 +65,36 @@ public class Space {
     }
 
 
-    public int determineMaxCellId() {
+    public void determineBorderCells() {
+        Coords coords = new Coords(0, 0);
+        for (int i = 0; i < sizeY; i++) {
+            coords.setY(i);
+            for (int j = 0; j < sizeX; j++) {
+                coords.setX(j);
+                List<Coords> neighbours = mooreNeighbourHood.findNeighboursCoords(coords);
+                for (Coords neighbourCoords : neighbours) {
+                    Cell cell = getCell(coords);
+                    Cell neighbour = getCell(neighbourCoords);
+                    if (cell.getId() != neighbour.getId()) {
+                        neighbour.setGrainBoundary(true);
+                        cell.setGrainBoundary(true);
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void resetBorderProperty() {
+        for (int i = 0; i < sizeY; i++) {
+            for (int j = 0; j < sizeX; j++) {
+                cells[i][j].setGrainBoundary(false);
+            }
+        }
+    }
+
+
+    public int findMaxCellId() {
         int maxCellsId = 0;
         for (int i = 0; i < sizeY; i++) {
             for (int j = 0; j < sizeX; j++) {

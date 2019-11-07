@@ -3,6 +3,7 @@ package grainGrowth.model.core;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.HashMap;
@@ -12,7 +13,6 @@ import java.util.Map;
 public class InputOutputUtils {
 
     private static final int EMPTY = -1;
-    private static final int BLACK = -16777216;
 
 
     public static void saveSpace(Space space, File file) throws FileNotFoundException {
@@ -48,7 +48,11 @@ public class InputOutputUtils {
         while ((line = bufferedReader.readLine()) != null) {
             numbers = line.split(";");
             coords = new Coords(Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1]));
-            newSpace.getCell(coords).setId(Integer.parseInt(numbers[2]));
+            Cell cell = newSpace.getCell(coords);
+            cell.setId(Integer.parseInt(numbers[2]));
+            if (cell.getId() < 0) {
+                cell.setGrowable(false);
+            }
         }
         bufferedReader.close();
         return newSpace;
@@ -58,7 +62,8 @@ public class InputOutputUtils {
     private static Space prepareSpaceBasedOnImage(BufferedImage image) {
         Map<Integer, Integer> idByRGB = new HashMap<>();
         idByRGB.put(EMPTY, 0);
-        idByRGB.put(BLACK, -1);
+        idByRGB.put(Color.BLACK.getRGB(), -1);
+        idByRGB.put(Color.MAGENTA.getRGB(), -2);
         int sizeX = image.getWidth() / 2;
         int sizeY = image.getHeight() / 2;
         Space newSpace = new Space(sizeX, sizeY);
@@ -70,7 +75,11 @@ public class InputOutputUtils {
                     idByRGB.put(rgb, idCounter);
                     idCounter++;
                 }
-                newSpace.getCells()[i][j].setId(idByRGB.get(rgb));
+                Cell cell = newSpace.getCells()[i][j];
+                cell.setId(idByRGB.get(rgb));
+                if (cell.getId() < 0) {
+                    cell.setGrowable(false);
+                }
             }
         }
         return newSpace;

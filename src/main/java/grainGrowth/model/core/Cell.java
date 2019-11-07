@@ -5,11 +5,13 @@ public class Cell {
 
     private int id;
     private boolean growable;
+    private boolean grainBoundary;
 
 
     public Cell() {
         id = 0;
         growable = true;
+        grainBoundary = false;
     }
 
 
@@ -30,6 +32,16 @@ public class Cell {
 
     public void setGrowable(boolean growable) {
         this.growable = growable;
+    }
+
+
+    public boolean isGrainBoundary() {
+        return grainBoundary;
+    }
+
+
+    public void setGrainBoundary(boolean grainBoundary) {
+        this.grainBoundary = grainBoundary;
     }
 
 
