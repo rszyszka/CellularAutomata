@@ -4,38 +4,50 @@ import junit.framework.TestCase;
 
 public class SpaceTest extends TestCase {
 
-    private Space space;
-    private int sizeX = 300;
-    private int sizeY = 300;
+    Space space;
 
 
     @Override
     protected void setUp() {
-        space = new Space(sizeX, sizeY);
-    }
-
-
-    public void testCopyConstructor() {
+        space = new Space(4, 4);
         space.getCells()[0][0].setId(1);
-        Space newSpace = new Space(space);
-        assertEquals(sizeX, newSpace.getSizeX());
-        space.getCells()[0][0].setId(0);
-        assertEquals(1, newSpace.getCells()[0][0].getId());
+        space.getCells()[0][1].setId(1);
+        space.getCells()[0][2].setId(1);
+        space.getCells()[0][3].setId(2);
+        space.getCells()[1][0].setId(1);
+        space.getCells()[1][1].setId(1);
+        space.getCells()[1][2].setId(2);
+        space.getCells()[1][3].setId(2);
+        space.getCells()[2][0].setId(1);
+        space.getCells()[2][1].setId(2);
+        space.getCells()[2][2].setId(2);
+        space.getCells()[2][3].setId(2);
+        space.getCells()[3][0].setId(2);
+        space.getCells()[3][1].setId(2);
+        space.getCells()[3][2].setId(2);
+        space.getCells()[3][3].setId(2);
     }
 
+    public void testDetermineBorderCells() {
+        space.determineBorderCells();
+        assertTrue(space.getCells()[0][2].isGrainBoundary());
+        assertTrue(space.getCells()[0][3].isGrainBoundary());
+        assertTrue(space.getCells()[1][1].isGrainBoundary());
+        assertTrue(space.getCells()[1][2].isGrainBoundary());
+        assertTrue(space.getCells()[1][2].isGrainBoundary());
+        assertTrue(space.getCells()[2][0].isGrainBoundary());
+        assertTrue(space.getCells()[2][1].isGrainBoundary());
+        assertTrue(space.getCells()[3][0].isGrainBoundary());
+        assertTrue(space.getCells()[3][1].isGrainBoundary());
+        assertTrue(space.getCells()[2][2].isGrainBoundary());
+        assertTrue(space.getCells()[1][0].isGrainBoundary());
+        assertTrue(space.getCells()[1][3].isGrainBoundary());
+        assertTrue(space.getCells()[0][1].isGrainBoundary());
 
-    public void testGetSizeX() {
-        assertEquals(sizeX, space.getSizeX());
-    }
+        assertFalse(space.getCells()[3][2].isGrainBoundary());
+        assertFalse(space.getCells()[3][3].isGrainBoundary());
+        assertFalse(space.getCells()[2][3].isGrainBoundary());
+        assertFalse(space.getCells()[0][0].isGrainBoundary());
 
-
-    public void testGetSizeY() {
-        assertEquals(sizeY, space.getSizeY());
-    }
-
-
-    @Override
-    protected void tearDown() {
-        space = null;
     }
 }

@@ -1,8 +1,5 @@
-package com.rszyszka.msm.model.utils;
+package com.rszyszka.msm.model.core;
 
-import com.rszyszka.msm.model.core.Cell;
-import com.rszyszka.msm.model.core.Coords;
-import com.rszyszka.msm.model.core.Space;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;

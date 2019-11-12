@@ -36,7 +36,7 @@ public class Coords {
 
     @Override
     public int hashCode() {
-        return (int) Math.sqrt(Math.pow(x, 2) - Math.pow(x, 2));
+        return (int) Math.sqrt(Math.pow(x, 2) - Math.pow(y, 2));
     }
 
 }

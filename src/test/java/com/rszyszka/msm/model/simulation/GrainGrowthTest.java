@@ -1,70 +1,41 @@
 package com.rszyszka.msm.model.simulation;
 
-import com.rszyszka.msm.model.core.AbsorbentBoundaryCondition;
-import com.rszyszka.msm.model.core.MooreNeighbourhood;
+import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
 import junit.framework.TestCase;
 
+
 public class GrainGrowthTest extends TestCase {
 
-    private GrainGrowth grainGrowth;
-    private Space space;
-    private int sizeX;
-    private int sizeY;
+    GrainGrowth grainGrowth;
 
-    @Override
-    protected void setUp() {
-        sizeX = 10;
-        sizeY = 10;
-        space = new Space(sizeX, sizeY);
+    public void setUp() {
+        Space space = new Space(10, 10);
         grainGrowth = new GrainGrowth(space);
     }
 
 
     public void testSimulateGrainGrowth() {
-        space.getCells()[5][5].setId(1);
-        space.getCells()[9][9].setId(2);
-        grainGrowth = new GrainGrowth(space);
-
-        assertEquals(2, determineCounter());
-
+        assertEquals(0, countFilledCells());
         grainGrowth.simulateGrainGrowth();
+        assertEquals(0, countFilledCells());
 
-        assertEquals(100, determineCounter());
-    }
+        grainGrowth.getSpace().getCells()[1][1].setId(1);
+        assertEquals(1, countFilledCells());
+        grainGrowth.simulateGrainGrowth();
+        assertEquals(100, countFilledCells());
 
-
-    public void testPerformStep() {
-        space.getCells()[5][5].setId(1);
+        Space space = new Space(10, 10);
+        space.getCells()[1][1].setId(1);
+        space.getCells()[1][1].setGrowable(false);
         grainGrowth = new GrainGrowth(space);
-
-        assertEquals(1, determineCounter());
-
-        grainGrowth.performIteration();
-
-        assertEquals(9, determineCounter());
+        assertEquals(1, countFilledCells());
+        grainGrowth.simulateGrainGrowth();
+        assertEquals(1, countFilledCells());
     }
 
 
-    public void testPerformThreeSteps() {
-        AbsorbentBoundaryCondition boundaryCondition = new AbsorbentBoundaryCondition(sizeX, sizeY);
-        MooreNeighbourhood mooreNeighbourhood = new MooreNeighbourhood(boundaryCondition);
-        space.getCells()[0][0].setId(1);
-        space.getCells()[2][2].setId(1);
-        grainGrowth = new GrainGrowth(space);
-        grainGrowth.getSpace().setMooreNeighbourHood(mooreNeighbourhood);
-
-        grainGrowth.performIteration();
-        assertEquals(12, determineCounter());
-        grainGrowth.performIteration();
-        assertEquals(25, determineCounter());
-        grainGrowth.performIteration();
-        assertEquals(36, determineCounter());
-
-    }
-
-
-    private int determineCounter() {
+    private int countFilledCells() {
         int counter = 0;
         for (int i = 0; i < grainGrowth.getSpace().getSizeY(); i++) {
             for (int j = 0; j < grainGrowth.getSpace().getSizeX(); j++) {
@@ -77,9 +48,19 @@ public class GrainGrowthTest extends TestCase {
     }
 
 
-    @Override
-    protected void tearDown() {
-        grainGrowth = null;
+    public void testSetNewIdIfDifferentThanZero() {
+        assertFalse(grainGrowth.setNewIdIfDifferentThanZero(new Coords(0, 0), 0));
+        assertTrue(grainGrowth.setNewIdIfDifferentThanZero(new Coords(0, 0), 1));
     }
 
+
+    public void testPerformGrowthIfPossible() {
+        grainGrowth.getSpace().getCells()[1][1].setId(1);
+
+        grainGrowth.performGrowthIfPossible(new Coords(1, 1));
+        assertFalse(grainGrowth.changed);
+
+        grainGrowth.performGrowthIfPossible(new Coords(0, 0));
+        assertTrue(grainGrowth.changed);
+    }
 }

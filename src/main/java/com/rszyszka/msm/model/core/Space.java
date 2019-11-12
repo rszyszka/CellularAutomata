@@ -137,9 +137,4 @@ public class Space {
         return mooreNeighbourHood;
     }
 
-
-    public void setMooreNeighbourHood(MooreNeighbourhood mooreNeighbourHood) {
-        this.mooreNeighbourHood = mooreNeighbourHood;
-    }
-
 }

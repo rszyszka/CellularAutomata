@@ -2,6 +2,7 @@ package com.rszyszka.msm.model.generator.inclusions;
 
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
+import com.rszyszka.msm.model.generator.GeneratorUtils;
 
 import java.util.List;
 import java.util.Random;
@@ -17,24 +18,32 @@ public abstract class InclusionsGenerator {
     protected List<Coords> availableCellCords;
 
 
-    protected InclusionsGenerator(int number, int size, Space space, List<Coords> availableCellCords) {
+    protected InclusionsGenerator(int number, int size, Space space) {
         this.number = number;
         this.size = size;
         this.space = space;
-        this.availableCellCords = availableCellCords;
     }
 
-    public static InclusionsGenerator createInclusionsGenerator(int number, int size, Space space, List<Coords> availableCellCords) {
-        switch (TYPE) {
-            case CIRCULAR:
-                return new CircularInclusionsGenerator(number, size, space, availableCellCords);
-            case SQUARED:
-                return new SquaredInclusionsGenerator(number, size, space, availableCellCords);
+
+    public static InclusionsGenerator createInstance(int number, int size, Space space) {
+        if (TYPE == InclusionType.SQUARED) {
+            return new SquaredInclusionsGenerator(number, size, space);
+        } else {
+            return new CircularInclusionsGenerator(number, size, space);
         }
-        return null;
     }
 
-    public void putInclusionsInAvailableCells() {
+
+    public void putInclusionsRandomly() {
+        availableCellCords = GeneratorUtils.determineFreeCellCords(space);
+        if (availableCellCords.isEmpty()) {
+            availableCellCords = GeneratorUtils.determineGrainBoundaryCells(space);
+        }
+        putInclusionsRandomlyInAvailableCells();
+    }
+
+
+    private void putInclusionsRandomlyInAvailableCells() {
         int availableCellCordsSize = availableCellCords.size();
         Random random = new Random();
 
@@ -46,7 +55,7 @@ public abstract class InclusionsGenerator {
     }
 
 
-    protected void placeInclusions(Coords cellCoords) {
+    public void placeInclusions(Coords cellCoords) {
         Set<Coords> coordsSet = determineCoordsSet(cellCoords);
 
         for (Coords c : coordsSet) {

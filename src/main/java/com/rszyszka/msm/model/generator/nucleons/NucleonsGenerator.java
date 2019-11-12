@@ -1,31 +1,16 @@
 package com.rszyszka.msm.model.generator.nucleons;
 
-import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
-import com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator;
+import com.rszyszka.msm.model.generator.GeneratorUtils;
 
-import java.util.*;
-
+import java.util.List;
+import java.util.Random;
 
 public class NucleonsGenerator {
 
-    public static void putInclusionsRandomly(int number, int size, Space space) {
-        List<Coords> availableCellCords = determineFreeCellCords(space);
-
-        if (availableCellCords.isEmpty()) {
-            availableCellCords = determineGrainBoundaryCells(space);
-        }
-
-        InclusionsGenerator generator = InclusionsGenerator.createInclusionsGenerator(number, size, space, availableCellCords);
-        if (generator != null) {
-            generator.putInclusionsInAvailableCells();
-        }
-    }
-
-
     public static void putNucleonsRandomly(int number, Space space) {
-        List<Coords> freeCellCoords = determineFreeCellCords(space);
+        List<Coords> freeCellCoords = GeneratorUtils.determineFreeCellCords(space);
 
         int freeCellCoordsSize = freeCellCoords.size();
         int firstIdToPut = space.findMaxCellId() + 1;
@@ -38,36 +23,6 @@ public class NucleonsGenerator {
 
             firstIdToPut++;
         }
-    }
-
-
-    private static List<Coords> determineFreeCellCords(Space space) {
-        List<Coords> freeCellCoords = new ArrayList<>();
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                if (space.getCells()[i][j].getId() == 0) {
-                    freeCellCoords.add(new Coords(j, i));
-                }
-            }
-        }
-        return freeCellCoords;
-    }
-
-
-    private static List<Coords> determineGrainBoundaryCells(Space space) {
-        Set<Coords> grainBoundaryCells = new HashSet<>();
-        Coords coords = new Coords(0, 0);
-        for (int i = 0; i < space.getSizeY(); i++) {
-            coords.setY(i);
-            for (int j = 0; j < space.getSizeX(); j++) {
-                coords.setX(j);
-                Cell cell = space.getCell(coords);
-                if (cell.isGrainBoundary()) {
-                    grainBoundaryCells.add(coords);
-                }
-            }
-        }
-        return new ArrayList<>(grainBoundaryCells);
     }
 
 }

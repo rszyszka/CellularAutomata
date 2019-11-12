@@ -1,17 +1,14 @@
 package com.rszyszka.msm.controller;
 
 import com.rszyszka.msm.model.core.Cell;
-import com.rszyszka.msm.model.core.Coords;
+import com.rszyszka.msm.model.core.InputOutputUtils;
 import com.rszyszka.msm.model.core.Space;
-import com.rszyszka.msm.model.generator.inclusions.CircularInclusionsGenerator;
 import com.rszyszka.msm.model.generator.inclusions.InclusionType;
 import com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator;
 import com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator;
-import com.rszyszka.msm.model.generator.structures.Grain;
-import com.rszyszka.msm.model.generator.structures.StructureType;
+import com.rszyszka.msm.model.generator.structures.*;
 import com.rszyszka.msm.model.simulation.GrainGrowth;
 import com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth;
-import com.rszyszka.msm.model.utils.InputOutputUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -34,16 +31,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class MainViewController implements Initializable {
 
-    @FXML
-    public Button generateGrainBoundariesButton;
+    private final ObservableMap<Integer, Grain> selectedGrainsById = FXCollections.observableHashMap();
     @FXML
     private Canvas canvas;
-    private final int cellSize = 2;
     @FXML
     private TextField xSizeTextField;
     @FXML
@@ -54,12 +48,18 @@ public class MainViewController implements Initializable {
     private TextField inclusionsNumberTextField;
     @FXML
     private TextField inclusionSizeTextField;
+    private final Map<Integer, Color> colorById = new HashMap<>();
+    private final int cellSize = 2;
     @FXML
     private Label spaceSizeLabel;
     @FXML
     private Label probabilityLabel;
     @FXML
     private Label probabilityTitleLabel;
+    @FXML
+    private Button generateGrainBoundariesButton;
+    @FXML
+    private TextField gbSizeTextField;
     @FXML
     private Button initializeButton;
     @FXML
@@ -76,27 +76,28 @@ public class MainViewController implements Initializable {
     private ComboBox<InclusionType> inclusionTypeComboBox;
     @FXML
     private ComboBox<SimulationType> simulationTypeComboBox;
-    private final ObservableMap<Integer, Grain> selectedGrainsById = FXCollections.observableHashMap();
     @FXML
-    public Label numberOfGrainsSelected;
+    private Label gbPercentageLabel;
     @FXML
-    public ComboBox<StructureType> structureTypeComboBox;
+    private Label numberOfGrainsSelected;
     @FXML
-    public Button lockSelectedGrainsButton;
+    private Button clearGrainsButton;
+    @FXML
+    private ComboBox<StructureType> structureTypeComboBox;
+    @FXML
+    private Button lockSelectedGrainsButton;
+    @FXML
+    private Button resetSelectionButton;
 
     private List<Control> controls;
-
+    private FileChooser fileChooser;
+    private Space space;
     private int xSize;
     private int ySize;
+    private int inclusionSize;
     private int nucleonsNumber;
     private int inclusionsNumber;
-    private int inclusionSize;
-    private Space space;
-    private FileChooser fileChooser;
 
-    private final Map<Integer, Color> colorById = new HashMap<>();
-    @FXML
-    public Button resetSelectionButton;
 
     public void initializeEmptySpace() {
         xSize = Integer.parseInt(xSizeTextField.getText());
@@ -107,6 +108,8 @@ public class MainViewController implements Initializable {
         adjustNodesToSpaceSize();
 
         selectedGrainsById.clear();
+
+        gbPercentageLabel.setText("GB: 0%");
 
         clearCanvas();
     }
@@ -136,7 +139,7 @@ public class MainViewController implements Initializable {
         inclusionsNumber = Integer.parseInt(inclusionsNumberTextField.getText());
         inclusionSize = Integer.parseInt(inclusionSizeTextField.getText());
         InclusionsGenerator.TYPE = inclusionTypeComboBox.getValue();
-        NucleonsGenerator.putInclusionsRandomly(inclusionsNumber, inclusionSize, space);
+        InclusionsGenerator.createInstance(inclusionsNumber, inclusionSize, space).putInclusionsRandomly();
         draw();
     }
 
@@ -184,16 +187,19 @@ public class MainViewController implements Initializable {
 
     private void generateNewColor(int id) {
         Random random = new Random();
-        int red = random.nextInt(130) + 10;
-        int green = random.nextInt(230) + 10;
-        int blue = random.nextInt(230) + 10;
+
+        int red = random.nextInt(100) + 30;
+        int green = random.nextInt(220) + 30;
+        int blue = random.nextInt(220) + 30;
+
         Color newColor = Color.rgb(red, green, blue);
         while (colorById.containsValue(newColor)) {
-            red = random.nextInt(130) + 10;
-            green = random.nextInt(230) + 10;
-            blue = random.nextInt(230) + 10;
+            red = random.nextInt(100) + 30;
+            green = random.nextInt(220) + 30;
+            blue = random.nextInt(220) + 30;
             newColor = Color.rgb(red, green, blue);
         }
+
         colorById.put(id, newColor);
     }
 
@@ -252,7 +258,7 @@ public class MainViewController implements Initializable {
         int x = (int) Math.ceil(event.getX() / cellSize);
         int y = (int) Math.ceil(event.getY() / cellSize);
 
-        int id = space.getCell(new Coords(x, y)).getId();
+        int id = space.getCells()[y][x].getId();
 
         if (id != 0) {
             if (selectedGrainsById.containsKey(id)) {
@@ -266,48 +272,76 @@ public class MainViewController implements Initializable {
     }
 
 
-    public void generateSubstructure() {
-        LinkedList<Integer> idsToDualPhaseConversion = new LinkedList<>();
-        LinkedList<Integer> idsToInclusionsConversion = new LinkedList<>();
+    public void lockStructures() {
+        SubStructureGenerator subStructureGenerator = new SubStructureGenerator(selectedGrainsById.values());
+        DualPhaseGenerator dualPhaseGenerator = new DualPhaseGenerator(selectedGrainsById.values());
+        int size = Integer.parseInt(gbSizeTextField.getText());
+        GrainBoundaryGenerator grainBoundaryGenerator = new GrainBoundaryGenerator(selectedGrainsById.values(), space, size);
 
-        for (Grain grain : selectedGrainsById.values()) {
-            if (grain.getStructureType() == StructureType.DUAL_PHASE) {
-                if (grain.getId() != -2) {
-                    idsToDualPhaseConversion.add(grain.getId());
-                    grain.setId(-2);
-                }
-            }
-            if (grain.getStructureType() == StructureType.GRAIN_BOUNDARY) {
-                if (grain.getId() != -1) {
-                    idsToInclusionsConversion.add(grain.getId());
-                    grain.setId(-1);
-                }
-                space.determineBorderCells();
+        space.determineBorderCells();
+        subStructureGenerator.generate();
+        dualPhaseGenerator.generate();
+        grainBoundaryGenerator.generate();
+        space.resetBorderProperty();
 
-                List<Coords> availableCoords = grain.getCoords().stream()
-                        .filter(coords -> space.getCell(coords).isGrainBoundary())
-                        .collect(Collectors.toList());
+        convertGrainIdsToDualPhaseIfNeeded(dualPhaseGenerator.getIdsToDualPhaseConversion());
+        convertGrainIdsToInclusionsIfNeeded(grainBoundaryGenerator.getIdsToInclusionsConversion());
 
-                CircularInclusionsGenerator generator = new CircularInclusionsGenerator(space, availableCoords, 2);
-                generator.generateGrainBoundaries();
-                space.resetBorderProperty();
-            } else {
-                grain.getCells().forEach(cell -> {
-                    cell.setGrowable(false);
-                    cell.setId(grain.getId());
-                });
-            }
-        }
+        clearNotSelectedGrains();
 
+        String gbPercentage = String.valueOf(grainBoundaryGenerator.computeGbPercentage());
+        gbPercentageLabel.setText("GB: " + gbPercentage + "%");
+
+        draw();
+    }
+
+
+    private void convertGrainIdsToDualPhaseIfNeeded(List<Integer> idsToDualPhaseConversion) {
         if (!idsToDualPhaseConversion.isEmpty()) {
             selectedGrainsById.put(-2, new Grain(space, -2, StructureType.DUAL_PHASE));
             idsToDualPhaseConversion.forEach(selectedGrainsById::remove);
         }
+    }
+
+
+    private void convertGrainIdsToInclusionsIfNeeded(List<Integer> idsToInclusionsConversion) {
         if (!idsToInclusionsConversion.isEmpty()) {
             selectedGrainsById.put(-1, new Grain(space, -1, StructureType.GRAIN_BOUNDARY));
             idsToInclusionsConversion.forEach(selectedGrainsById::remove);
         }
+    }
 
+
+    public void generateGrainBoundaries() {
+        int maxCellId = space.findMaxCellId();
+        List<Grain> grains = new LinkedList<>();
+        for (int i = 1; i <= maxCellId; i++) {
+            grains.add(new Grain(space, i, StructureType.GRAIN_BOUNDARY));
+        }
+        space.determineBorderCells();
+        int size = Integer.parseInt(gbSizeTextField.getText());
+        GrainBoundaryGenerator grainBoundaryGenerator = new GrainBoundaryGenerator(grains, space, size);
+        grainBoundaryGenerator.generateAllBoundaries();
+        space.resetBorderProperty();
+
+        convertGrainIdsToInclusionsIfNeeded(grainBoundaryGenerator.getIdsToInclusionsConversion());
+
+        String gbPercentage = String.valueOf(grainBoundaryGenerator.computeGbPercentage());
+        gbPercentageLabel.setText("GB: " + gbPercentage + "%");
+
+        selectedGrainsById.remove(-1);
+        draw();
+    }
+
+
+    public void clearGrains() {
+        selectedGrainsById.put(-1, new Grain(space, -1, StructureType.GRAIN_BOUNDARY));
+        clearNotSelectedGrains();
+        draw();
+    }
+
+
+    private void clearNotSelectedGrains() {
         for (int i = 0; i < space.getSizeY(); i++) {
             for (int j = 0; j < space.getSizeX(); j++) {
                 Cell cell = space.getCells()[i][j];
@@ -318,7 +352,7 @@ public class MainViewController implements Initializable {
                 cell.setId(0);
             }
         }
-        draw();
+        selectedGrainsById.remove(-1);
     }
 
 
@@ -435,6 +469,16 @@ public class MainViewController implements Initializable {
                 }
             }
         });
+
+
+        gbSizeTextField.setText("1");
+        gbSizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!gbSizeTextField.getText().matches("[1-9][0-9]?|100")) {
+                    gbSizeTextField.setText(String.valueOf(1));
+                }
+            }
+        });
     }
 
 
@@ -464,6 +508,8 @@ public class MainViewController implements Initializable {
         controls.add(xSizeTextField);
         controls.add(ySizeTextField);
         controls.add(initializeButton);
+        controls.add(gbSizeTextField);
+        controls.add(clearGrainsButton);
         controls.add(generateNucleonsButton);
         controls.add(generateInclusionsButton);
         controls.add(performGrainGrowthButton);
@@ -473,6 +519,7 @@ public class MainViewController implements Initializable {
         controls.add(structureTypeComboBox);
         controls.add(lockSelectedGrainsButton);
         controls.add(resetSelectionButton);
+        controls.add(generateGrainBoundariesButton);
     }
 
 
@@ -493,7 +540,4 @@ public class MainViewController implements Initializable {
         });
     }
 
-    public void generateGrainBoundaries() {
-
-    }
 }

@@ -4,15 +4,14 @@ import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 public class SquaredInclusionsGenerator extends InclusionsGenerator {
 
 
-    protected SquaredInclusionsGenerator(int number, int size, Space space, List<Coords> availableCellCords) {
-        super(number, size, space, availableCellCords);
+    protected SquaredInclusionsGenerator(int number, int size, Space space) {
+        super(number, size, space);
     }
 
 
