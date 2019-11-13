@@ -66,7 +66,7 @@ public class Space {
 
 
     public void determineBorderCells() {
-        Coords coords = new Coords(0, 0);
+        Coords coords = Coords.coords(0, 0);
         for (int i = 0; i < sizeY; i++) {
             coords.setY(i);
             for (int j = 0; j < sizeX; j++) {

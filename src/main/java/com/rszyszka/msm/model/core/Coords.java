@@ -4,9 +4,13 @@ public class Coords {
     private int x;
     private int y;
 
-    public Coords(int x, int y) {
+    private Coords(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public static Coords coords(int x, int y) {
+        return new Coords(x, y);
     }
 
     public int getX() {

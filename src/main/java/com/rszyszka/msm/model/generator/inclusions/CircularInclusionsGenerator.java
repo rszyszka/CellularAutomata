@@ -20,7 +20,7 @@ public class CircularInclusionsGenerator extends InclusionsGenerator {
         Set<Coords> coordsSet = new HashSet<>();
 
         if (size == 1) {
-            coordsSet.add(new Coords(randomizedCoords.getX(), randomizedCoords.getY()));
+            coordsSet.add(Coords.coords(randomizedCoords.getX(), randomizedCoords.getY()));
             return coordsSet;
         }
 
@@ -28,7 +28,7 @@ public class CircularInclusionsGenerator extends InclusionsGenerator {
 
         for (int y = randomizedCoords.getY() - modifier; y <= randomizedCoords.getY() + modifier; y++) {
             for (int x = randomizedCoords.getX() - modifier; x <= randomizedCoords.getX() + modifier; x++) {
-                Coords coords = new Coords(x, y);
+                Coords coords = Coords.coords(x, y);
                 double distance = computeDistance(coords, randomizedCoords);
                 if (distance < modifier) {
                     space.getBoundaryCondition().correctCoordsIfNeeded(coords);

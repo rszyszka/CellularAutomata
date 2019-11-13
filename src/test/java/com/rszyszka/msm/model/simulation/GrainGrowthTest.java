@@ -49,18 +49,18 @@ public class GrainGrowthTest extends TestCase {
 
 
     public void testSetNewIdIfDifferentThanZero() {
-        assertFalse(grainGrowth.setNewIdIfDifferentThanZero(new Coords(0, 0), 0));
-        assertTrue(grainGrowth.setNewIdIfDifferentThanZero(new Coords(0, 0), 1));
+        assertFalse(grainGrowth.setNewIdIfDifferentThanZero(Coords.coords(0, 0), 0));
+        assertTrue(grainGrowth.setNewIdIfDifferentThanZero(Coords.coords(0, 0), 1));
     }
 
 
     public void testPerformGrowthIfPossible() {
         grainGrowth.getSpace().getCells()[1][1].setId(1);
 
-        grainGrowth.performGrowthIfPossible(new Coords(1, 1));
+        grainGrowth.performGrowthIfPossible(Coords.coords(1, 1));
         assertFalse(grainGrowth.changed);
 
-        grainGrowth.performGrowthIfPossible(new Coords(0, 0));
+        grainGrowth.performGrowthIfPossible(Coords.coords(0, 0));
         assertTrue(grainGrowth.changed);
     }
 }

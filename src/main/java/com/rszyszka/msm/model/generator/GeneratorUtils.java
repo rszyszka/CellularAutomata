@@ -16,7 +16,7 @@ public class GeneratorUtils {
         for (int i = 0; i < space.getSizeY(); i++) {
             for (int j = 0; j < space.getSizeX(); j++) {
                 if (space.getCells()[i][j].getId() == 0) {
-                    freeCellCoords.add(new Coords(j, i));
+                    freeCellCoords.add(Coords.coords(j, i));
                 }
             }
         }
@@ -30,7 +30,7 @@ public class GeneratorUtils {
             for (int j = 0; j < space.getSizeX(); j++) {
                 Cell cell = space.getCells()[i][j];
                 if (cell.isGrainBoundary()) {
-                    grainBoundaryCells.add(new Coords(j, i));
+                    grainBoundaryCells.add(Coords.coords(j, i));
                 }
             }
         }

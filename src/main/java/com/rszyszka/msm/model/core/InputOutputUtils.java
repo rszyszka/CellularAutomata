@@ -47,7 +47,7 @@ public class InputOutputUtils {
         Coords coords;
         while ((line = bufferedReader.readLine()) != null) {
             numbers = line.split(";");
-            coords = new Coords(Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1]));
+            coords = Coords.coords(Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1]));
             Cell cell = newSpace.getCell(coords);
             cell.setId(Integer.parseInt(numbers[2]));
             if (cell.getId() < 0) {

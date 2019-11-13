@@ -11,8 +11,8 @@ public class CoordsTest extends TestCase {
 
     @Override
     public void setUp() {
-        coords1 = new Coords(1, 1);
-        coords2 = new Coords(1, 1);
+        coords1 = Coords.coords(1, 1);
+        coords2 = Coords.coords(1, 1);
     }
 
     public void testTestEquals() {

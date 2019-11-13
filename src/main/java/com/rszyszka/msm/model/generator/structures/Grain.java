@@ -31,7 +31,7 @@ public class Grain {
                 Cell cell = space.getCells()[i][j];
                 if (cell.getId() == id) {
                     cells.add(cell);
-                    coords.add(new Coords(j, i));
+                    coords.add(Coords.coords(j, i));
                 }
             }
         }

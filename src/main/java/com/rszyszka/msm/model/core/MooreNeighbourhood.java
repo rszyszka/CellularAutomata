@@ -3,6 +3,8 @@ package com.rszyszka.msm.model.core;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.rszyszka.msm.model.core.Coords.coords;
+
 
 public class MooreNeighbourhood {
 
@@ -38,10 +40,10 @@ public class MooreNeighbourhood {
         int x = coords.getX();
         int y = coords.getY();
 
-        neighboursCoords.add(new Coords(x, y - 1));
-        neighboursCoords.add(new Coords(x - 1, y));
-        neighboursCoords.add(new Coords(x + 1, y));
-        neighboursCoords.add(new Coords(x, y + 1));
+        neighboursCoords.add(coords(x, y - 1));
+        neighboursCoords.add(coords(x - 1, y));
+        neighboursCoords.add(coords(x + 1, y));
+        neighboursCoords.add(coords(x, y + 1));
 
         for (Coords c : neighboursCoords) {
             boundaryCondition.correctCoordsIfNeeded(c);
@@ -61,10 +63,10 @@ public class MooreNeighbourhood {
         int x = coords.getX();
         int y = coords.getY();
 
-        neighboursCoords.add(new Coords(x - 1, y - 1));
-        neighboursCoords.add(new Coords(x + 1, y - 1));
-        neighboursCoords.add(new Coords(x - 1, y + 1));
-        neighboursCoords.add(new Coords(x + 1, y + 1));
+        neighboursCoords.add(coords(x - 1, y - 1));
+        neighboursCoords.add(coords(x + 1, y - 1));
+        neighboursCoords.add(coords(x - 1, y + 1));
+        neighboursCoords.add(coords(x + 1, y + 1));
 
         for (Coords c : neighboursCoords) {
             boundaryCondition.correctCoordsIfNeeded(c);

@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 public class ShapeControlGrainGrowthTest extends TestCase {
 
     ShapeControlGrainGrowth grainGrowth;
-    Coords coords = new Coords(1, 1);
+    Coords coords = Coords.coords(1, 1);
 
     public void testFirstRule() {
         Space space = new Space(3, 3);

@@ -146,6 +146,12 @@ public class MainViewController implements Initializable {
 
     public void performGrainGrowth() {
         disableNodes();
+        SimulationThread simulationThread = new SimulationThread(this, createGrainGrowthInstance());
+        simulationThread.start();
+    }
+
+
+    private GrainGrowth createGrainGrowthInstance() {
         GrainGrowth grainGrowth;
         if (simulationTypeComboBox.getValue() == SimulationType.SHAPE_CONTROL_GRAIN_GROWTH) {
             double probability = probabilitySlider.getValue();
@@ -153,9 +159,7 @@ public class MainViewController implements Initializable {
         } else {
             grainGrowth = new GrainGrowth(space);
         }
-
-        SimulationThread simulationThread = new SimulationThread(this, grainGrowth);
-        simulationThread.start();
+        return grainGrowth;
     }
 
 
