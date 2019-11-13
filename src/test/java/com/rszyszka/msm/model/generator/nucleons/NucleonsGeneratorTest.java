@@ -1,6 +1,6 @@
-package com.rszyszka.msm.model.core;
+package com.rszyszka.msm.model.generator.nucleons;
 
-import com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator;
+import com.rszyszka.msm.model.core.Space;
 import junit.framework.TestCase;
 
 

@@ -37,7 +37,7 @@ public abstract class InclusionsGenerator {
     public void putInclusionsRandomly() {
         availableCellCords = GeneratorUtils.determineFreeCellCords(space);
         if (availableCellCords.isEmpty()) {
-            availableCellCords = GeneratorUtils.determineGrainBoundaryCells(space);
+            availableCellCords = GeneratorUtils.determineGrainBoundaryCellsCoords(space);
         }
         putInclusionsRandomlyInAvailableCells();
     }

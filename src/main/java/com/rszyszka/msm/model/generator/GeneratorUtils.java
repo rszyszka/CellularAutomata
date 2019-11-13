@@ -24,17 +24,17 @@ public class GeneratorUtils {
     }
 
 
-    public static List<Coords> determineGrainBoundaryCells(Space space) {
-        List<Coords> grainBoundaryCells = new ArrayList<>();
+    public static List<Coords> determineGrainBoundaryCellsCoords(Space space) {
+        List<Coords> grainBoundaryCellsCoords = new ArrayList<>();
         for (int i = 0; i < space.getSizeY(); i++) {
             for (int j = 0; j < space.getSizeX(); j++) {
                 Cell cell = space.getCells()[i][j];
                 if (cell.isGrainBoundary()) {
-                    grainBoundaryCells.add(Coords.coords(j, i));
+                    grainBoundaryCellsCoords.add(Coords.coords(j, i));
                 }
             }
         }
-        return grainBoundaryCells;
+        return grainBoundaryCellsCoords;
     }
 
 }

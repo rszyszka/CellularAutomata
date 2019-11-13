@@ -29,7 +29,7 @@ public class InputOutputUtils {
 
     public static Space loadSpace(File file) throws IOException {
         if ("txt".equals(FilenameUtils.getExtension(file.getName()))) {
-            return prepareSpaceBasedOnTxtFile(file);
+            return prepareSpaceBasedOnTxtFile(new BufferedReader(new FileReader(file)));
         } else {
             BufferedImage image = ImageIO.read(file);
             return prepareSpaceBasedOnImage(image);
@@ -37,9 +37,7 @@ public class InputOutputUtils {
     }
 
 
-    private static Space prepareSpaceBasedOnTxtFile(File file) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-
+    private static Space prepareSpaceBasedOnTxtFile(BufferedReader bufferedReader) throws IOException {
         String line = bufferedReader.readLine();
         String[] numbers = line.split(";");
         Space newSpace = new Space(Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1]));

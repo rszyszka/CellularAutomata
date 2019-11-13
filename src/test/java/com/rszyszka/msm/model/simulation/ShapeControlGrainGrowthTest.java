@@ -83,7 +83,10 @@ public class ShapeControlGrainGrowthTest extends TestCase {
         Space space = new Space(10, 10);
         space.getCells()[4][4].setId(1);
         space.getCells()[1][2].setId(2);
-        space.getCells()[8][6].setId(3);
+        space.getCells()[7][6].setId(-1);
+        space.getCells()[7][7].setId(-1);
+        space.getCells()[8][6].setId(-1);
+        space.getCells()[8][7].setId(-1);
         space.getCells()[0][9].setId(4);
         grainGrowth = new ShapeControlGrainGrowth(space, 0.1);
         grainGrowth.simulateGrainGrowth();

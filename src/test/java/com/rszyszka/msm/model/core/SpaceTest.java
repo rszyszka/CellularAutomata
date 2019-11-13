@@ -50,4 +50,8 @@ public class SpaceTest extends TestCase {
         assertFalse(space.getCells()[0][0].isGrainBoundary());
 
     }
+
+    public void testFindMaxCellId() {
+        assertEquals(2, space.findMaxCellId());
+    }
 }
