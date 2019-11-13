@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="0.0" y="676.8587102149202">com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth</node>
+    <node x="681.3519203390837" y="0.0">com.rszyszka.msm.controller.SimulationType</node>
+    <node x="373.5915276356924" y="1034.4124566874284">com.rszyszka.msm.model.simulation.GrainGrowth</node>
+    <node x="533.0406973411359" y="220.92754901581554">com.rszyszka.msm.controller.MainViewController</node>
+    <node x="759.1708226471947" y="855.6921962855513">com.rszyszka.msm.controller.SimulationThread</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.rszyszka.msm.controller.SimulationThread" target="com.rszyszka.msm.model.simulation.GrainGrowth">
+      <point x="-10.469039552266509" y="0.0" />
+      <point x="0.0" y="-5.691013788778662" />
+    </edge>
+    <edge source="com.rszyszka.msm.controller.MainViewController" target="com.rszyszka.msm.model.simulation.GrainGrowth">
+      <point x="4.846575820572951" y="1.229106511022394" />
+      <point x="4.846575820572951" y="1.229106511022394" />
+    </edge>
+    <edge source="com.rszyszka.msm.controller.SimulationThread" target="com.rszyszka.msm.controller.MainViewController">
+      <point x="-5.329714407545623" y="0.0" />
+      <point x="-5.329714407545538" y="0.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.controller.MainViewController" target="com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.controller.MainViewController" target="com.rszyszka.msm.controller.SimulationType">
+      <point x="-4.619397662556423" y="-1.913417161825464" />
+      <point x="-4.619397662556423" y="-1.913417161825464" />
+    </edge>
+    <edge source="com.rszyszka.msm.controller.MainViewController" target="com.rszyszka.msm.controller.SimulationThread">
+      <point x="15.989143222636756" y="0.0" />
+      <point x="15.989143222636756" y="0.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth" target="com.rszyszka.msm.model.simulation.GrainGrowth">
+      <point x="-6.653427814885504" y="0.0" />
+      <point x="-6.653427814885546" y="5.6843418860808015E-14" />
+    </edge>
+  </edges>
+  <settings layout="Circular" zoom="1.0821025195482188" x="508.8279201128114" y="441.6554346103877" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Constructors</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+

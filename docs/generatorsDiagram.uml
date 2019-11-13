@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="271.49087301587304" y="386.5">com.rszyszka.msm.model.generator.structures.StructureGenerator</node>
+    <node x="294.89126984127" y="0.0">com.rszyszka.msm.model.generator.structures.StructureType</node>
+    <node x="1109.2803571428574" y="212.0">com.rszyszka.msm.model.generator.inclusions.CircularInclusionsGenerator</node>
+    <node x="952.2803571428574" y="189.0">com.rszyszka.msm.model.generator.inclusions.InclusionType</node>
+    <node x="263.00000000000006" y="573.5">com.rszyszka.msm.model.generator.structures.SubStructureGenerator</node>
+    <node x="478.00000000000006" y="540.0">com.rszyszka.msm.model.generator.structures.GrainBoundaryGenerator</node>
+    <node x="0.0" y="562.0">com.rszyszka.msm.model.generator.structures.DualPhaseGenerator</node>
+    <node x="1367.2803571428574" y="212.0">com.rszyszka.msm.model.generator.inclusions.SquaredInclusionsGenerator</node>
+    <node x="1082.3337301587303" y="353.0">com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator</node>
+    <node x="618.2803571428574" y="189.0">com.rszyszka.msm.model.generator.GeneratorUtils</node>
+    <node x="320.14126984127" y="167.0">com.rszyszka.msm.model.generator.structures.Grain</node>
+    <node x="572.7803571428574" y="386.5">com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator" target="com.rszyszka.msm.model.generator.GeneratorUtils">
+      <point x="0.0" y="-25.0" />
+      <point x="-78.5" y="36.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.DualPhaseGenerator" target="com.rszyszka.msm.model.generator.structures.StructureType">
+      <point x="-91.125" y="-36.5" />
+      <point x="30.375" y="520.0" />
+      <point x="55.25" y="520.0" />
+      <point x="55.25" y="137.0" />
+      <point x="308.59126984127005" y="137.0" />
+      <point x="-54.799999999999955" y="58.5" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.inclusions.SquaredInclusionsGenerator" target="com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator">
+      <point x="0.0" y="13.0" />
+      <point x="1482.7803571428574" y="323.0" />
+      <point x="1335.6670634920638" y="323.0" />
+      <point x="101.33333333333337" y="-58.5" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.SubStructureGenerator" target="com.rszyszka.msm.model.generator.structures.StructureGenerator">
+      <point x="24.375" y="-25.0" />
+      <point x="384.87500000000006" y="520.0" />
+      <point x="372.4075396825398" y="520.0" />
+      <point x="14.416666666666742" y="25.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator" target="com.rszyszka.msm.model.generator.inclusions.InclusionType">
+      <point x="-101.33333333333329" y="-58.5" />
+      <point x="1133.000396825397" y="323.0" />
+      <point x="986.5303571428574" y="323.0" />
+      <point x="-34.25" y="36.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.GrainBoundaryGenerator" target="com.rszyszka.msm.model.generator.structures.StructureType">
+      <point x="109.20000000000005" y="-58.5" />
+      <point x="723.7" y="520.0" />
+      <point x="1608.7803571428574" y="520.0" />
+      <point x="1608.7803571428574" y="137.0" />
+      <point x="418.19126984126996" y="137.0" />
+      <point x="54.799999999999955" y="58.5" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.Grain" target="com.rszyszka.msm.model.generator.structures.StructureType">
+      <point x="-43.25" y="-58.0" />
+      <point x="0.0" y="58.5" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.GrainBoundaryGenerator" target="com.rszyszka.msm.model.generator.structures.Grain">
+      <point x="0.0" y="-58.5" />
+      <point x="614.5" y="490.0" />
+      <point x="562.2803571428574" y="490.0" />
+      <point x="562.2803571428574" y="333.0" />
+      <point x="475.84126984127005" y="333.0" />
+      <point x="69.20000000000005" y="58.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.StructureGenerator" target="com.rszyszka.msm.model.generator.structures.Grain">
+      <point x="-43.25" y="-25.0" />
+      <point x="314.74087301587304" y="333.0" />
+      <point x="372.04126984127" y="333.0" />
+      <point x="-34.60000000000002" y="58.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator" target="com.rszyszka.msm.model.generator.inclusions.CircularInclusionsGenerator">
+      <point x="-33.77777777777774" y="-58.5" />
+      <point x="1200.5559523809525" y="303.0" />
+      <point x="1148.9470238095241" y="303.0" />
+      <point x="-79.33333333333333" y="13.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.DualPhaseGenerator" target="com.rszyszka.msm.model.generator.structures.Grain">
+      <point x="-30.375" y="-36.5" />
+      <point x="91.125" y="520.0" />
+      <point x="66.25" y="520.0" />
+      <point x="66.25" y="323.0" />
+      <point x="337.44126984126996" y="323.0" />
+      <point x="-69.20000000000005" y="58.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.inclusions.CircularInclusionsGenerator" target="com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator">
+      <point x="79.33333333333326" y="13.0" />
+      <point x="1307.6136904761906" y="303.0" />
+      <point x="1268.1115079365081" y="303.0" />
+      <point x="33.77777777777783" y="-58.5" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator" target="com.rszyszka.msm.model.generator.inclusions.SquaredInclusionsGenerator">
+      <point x="67.55555555555554" y="-58.5" />
+      <point x="1301.889285714286" y="313.0" />
+      <point x="1405.7803571428574" y="313.0" />
+      <point x="-77.0" y="13.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.SubStructureGenerator" target="com.rszyszka.msm.model.generator.structures.Grain">
+      <point x="73.125" y="-25.0" />
+      <point x="433.62500000000006" y="520.0" />
+      <point x="464.4583333333334" y="520.0" />
+      <point x="464.4583333333334" y="333.0" />
+      <point x="441.2412698412699" y="333.0" />
+      <point x="34.59999999999991" y="58.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator" target="com.rszyszka.msm.model.generator.GeneratorUtils">
+      <point x="-135.1111111111111" y="-58.5" />
+      <point x="1099.2226190476192" y="333.0" />
+      <point x="853.7803571428574" y="333.0" />
+      <point x="78.5" y="36.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.GrainBoundaryGenerator" target="com.rszyszka.msm.model.generator.structures.StructureGenerator">
+      <point x="-54.60000000000002" y="-58.5" />
+      <point x="559.9000000000001" y="500.0" />
+      <point x="430.0742063492063" y="500.0" />
+      <point x="72.08333333333326" y="25.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.GrainBoundaryGenerator" target="com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator">
+      <point x="54.60000000000002" y="-58.5" />
+      <point x="669.1000000000001" y="510.0" />
+      <point x="1234.3337301587303" y="510.0" />
+      <point x="0.0" y="58.5" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.DualPhaseGenerator" target="com.rszyszka.msm.model.generator.structures.StructureGenerator">
+      <point x="30.375" y="-36.5" />
+      <point x="151.875" y="510.0" />
+      <point x="285.90753968253966" y="510.0" />
+      <point x="-72.08333333333337" y="25.0" />
+    </edge>
+    <edge source="com.rszyszka.msm.model.generator.structures.SubStructureGenerator" target="com.rszyszka.msm.model.generator.structures.StructureType">
+      <point x="-73.125" y="-25.0" />
+      <point x="287.37500000000006" y="500.0" />
+      <point x="218.72956349206362" y="500.0" />
+      <point x="218.72956349206362" y="147.0" />
+      <point x="335.9912698412699" y="147.0" />
+      <point x="-27.40000000000009" y="58.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.9165131982811541" x="804.5" y="328.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Properties</Category>
+    <Category>Methods</Category>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+
