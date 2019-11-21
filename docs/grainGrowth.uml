@@ -3,13 +3,13 @@
   <ID>JAVA</ID>
   <OriginalElement />
   <nodes>
-    <node x="0.0" y="1495.2018289755683">com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth</node>
-    <node x="2.951131988650502" y="1026.1726063861936">com.rszyszka.msm.model.simulation.GrainGrowth</node>
-    <node x="1048.5420256384507" y="238.97306488726963">com.rszyszka.msm.model.core.AbsorbentBoundaryCondition</node>
-    <node x="337.26759582444197" y="0.0">com.rszyszka.msm.model.core.MooreNeighbourhood</node>
-    <node x="809.1276406897753" y="1291.3156299981465">com.rszyszka.msm.model.core.InputOutputUtils</node>
-    <node x="486.5263500856563" y="1604.2833535296922">com.rszyszka.msm.model.core.Cell</node>
-    <node x="466.9478709751601" y="702.1022233891758">com.rszyszka.msm.model.core.Space</node>
+    <node x="0.0" y="1098.5947948782195">com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth</node>
+    <node x="130.35539018248073" y="1513.7992964883492">com.rszyszka.msm.model.simulation.GrainGrowth</node>
+    <node x="1106.251486459737" y="238.97306488726963">com.rszyszka.msm.model.core.AbsorbentBoundaryCondition</node>
+    <node x="394.9770566457281" y="0.0">com.rszyszka.msm.model.core.MooreNeighbourhood</node>
+    <node x="866.4459635400368" y="1292.519428892333">com.rszyszka.msm.model.core.InputOutputUtils</node>
+    <node x="543.8446729359177" y="1605.4871524238788">com.rszyszka.msm.model.core.Cell</node>
+    <node x="524.2661938254216" y="703.3060222833624">com.rszyszka.msm.model.core.Space</node>
   </nodes>
   <notes />
   <edges>
@@ -27,38 +27,38 @@
     </edge>
     <edge source="com.rszyszka.msm.model.core.MooreNeighbourhood" target="com.rszyszka.msm.model.core.AbsorbentBoundaryCondition">
       <point x="0.0" y="5.257311121191378" />
-      <point x="-16.180339887498917" y="0.0" />
+      <point x="-16.180339887498803" y="1.1368683772161603E-13" />
     </edge>
     <edge source="com.rszyszka.msm.model.core.Space" target="com.rszyszka.msm.model.core.AbsorbentBoundaryCondition">
-      <point x="0.0" y="14.468690817024765" />
-      <point x="13.83673794539709" y="-1.1368683772161603E-13" />
+      <point x="0.0" y="14.478960913704384" />
+      <point x="13.827773909905773" y="0.0" />
     </edge>
     <edge source="com.rszyszka.msm.model.core.Space" target="com.rszyszka.msm.model.core.MooreNeighbourhood">
-      <point x="-10.09148955104834" y="0.0" />
-      <point x="-10.091489551048324" y="0.0" />
+      <point x="-10.090564169915268" y="0.0" />
+      <point x="-10.090564169915256" y="0.0" />
     </edge>
     <edge source="com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth" target="com.rszyszka.msm.model.core.Space">
       <point x="0.0" y="0.0" />
       <point x="0.0" y="0.0" />
     </edge>
     <edge source="com.rszyszka.msm.model.simulation.GrainGrowth" target="com.rszyszka.msm.model.core.Space">
-      <point x="0.0" y="10.831067673153115" />
-      <point x="0.0" y="10.831067673153143" />
+      <point x="11.842701251724634" y="0.0" />
+      <point x="0.0" y="18.666811218921794" />
     </edge>
     <edge source="com.rszyszka.msm.model.core.InputOutputUtils" target="com.rszyszka.msm.model.core.Space">
-      <point x="-4.241331693801271" y="2.647849214580944" />
-      <point x="-4.241331693801271" y="2.6478492145809582" />
+      <point x="5.894375117262712" y="0.0" />
+      <point x="0.0" y="-9.441625249025606" />
     </edge>
     <edge source="com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth" target="com.rszyszka.msm.model.simulation.GrainGrowth">
-      <point x="5.016758457471781" y="0.0" />
-      <point x="5.016758457471894" y="0.0" />
+      <point x="-5.106339315280877" y="0.0" />
+      <point x="-5.1063393152807635" y="0.0" />
     </edge>
     <edge source="com.rszyszka.msm.model.core.Space" target="com.rszyszka.msm.model.core.Cell">
       <point x="10.000008773062461" y="-5.6843418860808015E-14" />
       <point x="10.00000877306249" y="0.0" />
     </edge>
   </edges>
-  <settings layout="Circular" zoom="0.5789592760180996" x="928.927433921559" y="679.4331601322626" />
+  <settings layout="Circular" zoom="0.3793884484711212" x="675.5" y="873.0" />
   <SelectedNodes />
   <Categories>
     <Category>Fields</Category>

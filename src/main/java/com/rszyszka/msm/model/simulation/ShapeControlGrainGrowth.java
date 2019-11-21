@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class ShapeControlGrainGrowth extends GrainGrowth {
+public class ShapeControlGrainGrowth extends SimpleGrainGrowth {
 
     private double probabilityForForthRule;
 

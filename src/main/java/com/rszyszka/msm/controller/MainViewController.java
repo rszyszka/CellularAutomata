@@ -9,6 +9,7 @@ import com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator;
 import com.rszyszka.msm.model.generator.structures.*;
 import com.rszyszka.msm.model.simulation.GrainGrowth;
 import com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth;
+import com.rszyszka.msm.model.simulation.SimpleGrainGrowth;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -157,7 +158,7 @@ public class MainViewController implements Initializable {
             double probability = probabilitySlider.getValue();
             grainGrowth = new ShapeControlGrainGrowth(space, probability);
         } else {
-            grainGrowth = new GrainGrowth(space);
+            grainGrowth = new SimpleGrainGrowth(space);
         }
         return grainGrowth;
     }
