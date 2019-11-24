@@ -1,40 +1,28 @@
 package com.rszyszka.msm.model.generator;
 
-
-import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class GeneratorUtils {
 
     public static List<Coords> determineFreeCellCords(Space space) {
-        List<Coords> freeCellCoords = new ArrayList<>();
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                if (space.getCells()[i][j].getId() == 0) {
-                    freeCellCoords.add(Coords.coords(j, i));
-                }
-            }
-        }
-        return freeCellCoords;
+        return space.getCellsByCoords().entrySet().stream()
+                .filter(coordsCellEntry -> coordsCellEntry.getValue().getId() == 0)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
 
     public static List<Coords> determineGrainBoundaryCellsCoords(Space space) {
-        List<Coords> grainBoundaryCellsCoords = new ArrayList<>();
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                Cell cell = space.getCells()[i][j];
-                if (cell.isGrainBoundary()) {
-                    grainBoundaryCellsCoords.add(Coords.coords(j, i));
-                }
-            }
-        }
-        return grainBoundaryCellsCoords;
+        return space.getCellsByCoords().entrySet().stream()
+                .filter(coordsCellEntry -> coordsCellEntry.getValue().isGrainBoundary())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
 }

@@ -6,7 +6,7 @@ import com.rszyszka.msm.model.core.Space;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
 
 public class SimpleGrainGrowth extends GrainGrowth {
@@ -26,30 +26,19 @@ public class SimpleGrainGrowth extends GrainGrowth {
     @Override
     public void simulateGrainGrowth() {
         space.resetBorderProperty();
-
         changed = true;
         while (changed) {
             performIteration();
         }
-
         space.determineBorderCells();
     }
 
 
     private void performIteration() {
         changed = false;
-        Coords coords = Coords.coords(0, 0);
-        for (int i = 0; i < space.getSizeY(); i++) {
-            coords.setY(i);
-            for (int j = 0; j < space.getSizeX(); j++) {
-                coords.setX(j);
-                Cell oldCell = space.getCell(coords);
-
-                if (oldCell.getId() == 0) {
-                    performGrowthIfPossible(coords);
-                }
-            }
-        }
+        space.getCellsByCoords().entrySet().stream()
+                .filter(coordsCellEntry -> coordsCellEntry.getValue().getId() == 0)
+                .forEach(coordsCellEntry -> performGrowthIfPossible(coordsCellEntry.getKey()));
         updateSpace();
     }
 
@@ -77,16 +66,18 @@ public class SimpleGrainGrowth extends GrainGrowth {
             }
         }
 
-        AtomicInteger mostFrequentId = new AtomicInteger();
-        AtomicInteger mostFrequentIdCounter = new AtomicInteger();
-        amountByGrainId.forEach((key, value) -> {
-            if (value > mostFrequentIdCounter.get()) {
-                mostFrequentId.set(key);
-                mostFrequentIdCounter.set(value);
+        int mostFrequentId = 0;
+        int mostFrequentIdCounter = 0;
+        for (Map.Entry<Integer, Integer> amountByGrainIdEntry : amountByGrainId.entrySet()) {
+            int grainId = amountByGrainIdEntry.getKey();
+            int amount = amountByGrainIdEntry.getValue();
+            if (amount > mostFrequentIdCounter) {
+                mostFrequentId = grainId;
+                mostFrequentIdCounter = amount;
             }
-        });
+        }
 
-        return mostFrequentId.get();
+        return mostFrequentId;
     }
 
 
@@ -101,13 +92,7 @@ public class SimpleGrainGrowth extends GrainGrowth {
 
 
     private void updateSpace() {
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                Cell currentCell = space.getCells()[i][j];
-                Cell nextIterationCell = nextIterationSpace.getCells()[i][j];
-                currentCell.setId(nextIterationCell.getId());
-            }
-        }
+        space.getCellsByCoords().forEach((coords, cell) -> cell.setId(nextIterationSpace.getCell(coords).getId()));
     }
 
 

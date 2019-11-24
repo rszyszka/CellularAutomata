@@ -25,15 +25,9 @@ public class NucleonsGeneratorTest extends TestCase {
     }
 
     private int determineCounter() {
-        int counter = 0;
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                if (space.getCells()[i][j].getId() != 0) {
-                    counter++;
-                }
-            }
-        }
-        return counter;
+        return (int) space.getCellsByCoords().values().stream()
+                .filter(cell -> cell.getId() != 0)
+                .count();
     }
 
     @Override

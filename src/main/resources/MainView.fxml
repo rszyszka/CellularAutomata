@@ -55,27 +55,9 @@
                         </VBox.margin>
                     </Separator>
                     <VBox>
-                        <Label alignment="CENTER" text="Number of Nucleons"/>
+                        <Label fx:id="numberOfNucleonsLabel" alignment="CENTER" text="Number of Nucleons"/>
                         <TextField fx:id="nucleonsNumberTextField" alignment="CENTER"/>
                         <Button fx:id="generateNucleonsButton" mnemonicParsing="false" onAction="#generateNucleons"
-                                prefWidth="210.0" text="Generate">
-                            <VBox.margin>
-                                <Insets top="5.0"/>
-                            </VBox.margin>
-                        </Button>
-                    </VBox>
-                    <Separator>
-                        <VBox.margin>
-                            <Insets top="10.0"/>
-                        </VBox.margin>
-                    </Separator>
-                    <VBox>
-                        <Label alignment="CENTER" text="Number of Inclusions"/>
-                        <TextField fx:id="inclusionsNumberTextField" alignment="CENTER"/>
-                        <Label alignment="CENTER" text="Inclusions Size"/>
-                        <TextField fx:id="inclusionSizeTextField" alignment="CENTER"/>
-                        <ComboBox fx:id="inclusionTypeComboBox" prefWidth="210.0"/>
-                        <Button fx:id="generateInclusionsButton" mnemonicParsing="false" onAction="#generateInclusions"
                                 prefWidth="210.0" text="Generate">
                             <VBox.margin>
                                 <Insets top="5.0"/>
@@ -99,7 +81,7 @@
                             </VBox.margin>
                         </Label>
                         <Slider fx:id="probabilitySlider" value="50.0"/>
-                        <Label fx:id="probabilityLabel" alignment="CENTER"/>
+                        <Label fx:id="probabilityLabel" alignment="CENTER" prefWidth="210"/>
                         <Button fx:id="performGrainGrowthButton" mnemonicParsing="false" onAction="#performGrainGrowth"
                                 prefWidth="210.0" text="Perform Simulation">
                             <VBox.margin>
@@ -110,6 +92,24 @@
                     <Separator>
                         <VBox.margin>
                             <Insets bottom="10.0" top="10.0"/>
+                        </VBox.margin>
+                    </Separator>
+                    <VBox>
+                        <Label alignment="CENTER" text="Number of Inclusions"/>
+                        <TextField fx:id="inclusionsNumberTextField" alignment="CENTER"/>
+                        <Label alignment="CENTER" text="Inclusions Size"/>
+                        <TextField fx:id="inclusionSizeTextField" alignment="CENTER"/>
+                        <ComboBox fx:id="inclusionTypeComboBox" prefWidth="210.0"/>
+                        <Button fx:id="generateInclusionsButton" mnemonicParsing="false" onAction="#generateInclusions"
+                                prefWidth="210.0" text="Generate">
+                            <VBox.margin>
+                                <Insets top="5.0"/>
+                            </VBox.margin>
+                        </Button>
+                    </VBox>
+                    <Separator>
+                        <VBox.margin>
+                            <Insets top="10.0"/>
                         </VBox.margin>
                     </Separator>
                     <VBox>

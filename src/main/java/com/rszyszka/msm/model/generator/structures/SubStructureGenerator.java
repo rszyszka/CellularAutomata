@@ -17,7 +17,7 @@ public class SubStructureGenerator extends StructureGenerator {
 
     @Override
     public void generate() {
-        determineCellsToLock();
+        determineCellsByCoordsToLock();
         blockCellsFromGrowing();
     }
 

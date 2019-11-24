@@ -21,7 +21,7 @@ public class DualPhaseGenerator extends StructureGenerator {
 
     @Override
     public void generate() {
-        determineCellsToLock();
+        determineCellsByCoordsToLock();
         setDualPhaseGrainsIds();
         blockCellsFromGrowing();
     }
@@ -34,7 +34,7 @@ public class DualPhaseGenerator extends StructureGenerator {
                 grain.setId(-2);
             }
         });
-        cellsToLock.forEach(cell -> cell.setId(-2));
+        cellsByCoordsToLock.values().forEach(cell -> cell.setId(-2));
     }
 
 

@@ -4,47 +4,42 @@ import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Grain {
 
     private int id;
-    private List<Cell> cells;
-    private List<Coords> coords;
+    private Map<Coords, Cell> cellsByCoords;
     private StructureType structureType;
 
 
     public Grain(Space space, int id, StructureType structureType) {
         this.id = id;
-        cells = new LinkedList<>();
-        coords = new LinkedList<>();
+        cellsByCoords = new HashMap<>();
         this.structureType = structureType;
         findGrainCells(space);
     }
 
 
     private void findGrainCells(Space space) {
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                Cell cell = space.getCells()[i][j];
-                if (cell.getId() == id) {
-                    cells.add(cell);
-                    coords.add(Coords.coords(j, i));
-                }
+        space.getCellsByCoords().forEach((coords, cell) -> {
+            if (cell.getId() == id) {
+                cellsByCoords.put(coords, cell);
             }
-        }
+        });
     }
 
+
+    public Map<Coords, Cell> getCellsByCoords() {
+        return cellsByCoords;
+    }
 
     public List<Cell> getCells() {
-        return cells;
-    }
-
-
-    public List<Coords> getCoords() {
-        return coords;
+        return new ArrayList<>();
     }
 
 

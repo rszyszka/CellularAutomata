@@ -3,7 +3,8 @@ package com.rszyszka.msm.controller;
 
 public enum SimulationType {
     GRAIN_GROWTH("Grain Growth"),
-    SHAPE_CONTROL_GRAIN_GROWTH("Shape control Grain Growth");
+    SHAPE_CONTROL_GRAIN_GROWTH("Shape control Grain Growth"),
+    MONTE_CARLO_GRAIN_GROWTH("Monte Carlo Grain Growth");
 
     private final String string;
 

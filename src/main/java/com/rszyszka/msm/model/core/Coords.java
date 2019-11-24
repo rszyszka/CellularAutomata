@@ -40,7 +40,8 @@ public class Coords {
 
     @Override
     public int hashCode() {
-        return (int) Math.sqrt(Math.pow(x, 2) - Math.pow(y, 2));
+        int tmp = (y + ((x + 1) / 2));
+        return x + (tmp * tmp);
     }
 
 }

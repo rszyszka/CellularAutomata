@@ -1,32 +1,32 @@
 package com.rszyszka.msm.model.generator.structures;
 
 import com.rszyszka.msm.model.core.Cell;
+import com.rszyszka.msm.model.core.Coords;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
 abstract public class StructureGenerator {
 
     protected List<Grain> grains;
-    protected List<Cell> cellsToLock;
+    protected Map<Coords, Cell> cellsByCoordsToLock;
 
 
     public abstract void generate();
 
 
     protected void blockCellsFromGrowing() {
-        cellsToLock.forEach(cell -> cell.setGrowable(false));
+        cellsByCoordsToLock.values().forEach(cell -> cell.setGrowable(false));
     }
 
 
-    protected void determineCellsToLock() {
-        this.cellsToLock = grains.stream()
-                .map(Grain::getCells)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toCollection(LinkedList::new));
+    protected void determineCellsByCoordsToLock() {
+        cellsByCoordsToLock = grains.stream()
+                .map(Grain::getCellsByCoords)
+                .flatMap(coordsCellMap -> coordsCellMap.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
 }

@@ -1,6 +1,6 @@
 package com.rszyszka.msm.controller;
 
-import com.rszyszka.msm.model.core.Cell;
+import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.InputOutputUtils;
 import com.rszyszka.msm.model.core.Space;
 import com.rszyszka.msm.model.generator.inclusions.InclusionType;
@@ -36,7 +36,6 @@ import java.util.*;
 
 public class MainViewController implements Initializable {
 
-    private final ObservableMap<Integer, Grain> selectedGrainsById = FXCollections.observableHashMap();
     @FXML
     private Canvas canvas;
     @FXML
@@ -49,18 +48,19 @@ public class MainViewController implements Initializable {
     private TextField inclusionsNumberTextField;
     @FXML
     private TextField inclusionSizeTextField;
-    private final Map<Integer, Color> colorById = new HashMap<>();
-    private final int cellSize = 2;
+    private final ObservableMap<Integer, Grain> selectedGrainsById = FXCollections.observableHashMap();
     @FXML
     private Label spaceSizeLabel;
     @FXML
     private Label probabilityLabel;
     @FXML
     private Label probabilityTitleLabel;
-    @FXML
-    private Button generateGrainBoundariesButton;
+    private final Map<Integer, Color> colorById = new HashMap<>();
+    private final int cellSize = 2;
     @FXML
     private TextField gbSizeTextField;
+    @FXML
+    private Label numberOfNucleonsLabel;
     @FXML
     private Button initializeButton;
     @FXML
@@ -70,7 +70,13 @@ public class MainViewController implements Initializable {
     @FXML
     private Button performGrainGrowthButton;
     @FXML
-    private MenuBar menuBar;
+    private Label gbPercentageLabel;
+    @FXML
+    private Label numberOfGrainsSelected;
+    @FXML
+    private Button generateGrainBoundariesButton;
+    @FXML
+    private Button lockSelectedGrainsButton;
     @FXML
     private Slider probabilitySlider;
     @FXML
@@ -78,18 +84,13 @@ public class MainViewController implements Initializable {
     @FXML
     private ComboBox<SimulationType> simulationTypeComboBox;
     @FXML
-    private Label gbPercentageLabel;
+    private ComboBox<StructureType> structureTypeComboBox;
     @FXML
-    private Label numberOfGrainsSelected;
+    private Button resetSelectionButton;
     @FXML
     private Button clearGrainsButton;
     @FXML
-    private ComboBox<StructureType> structureTypeComboBox;
-    @FXML
-    private Button lockSelectedGrainsButton;
-    @FXML
-    private Button resetSelectionButton;
-
+    private MenuBar menuBar;
     private List<Control> controls;
     private FileChooser fileChooser;
     private Space space;
@@ -163,12 +164,11 @@ public class MainViewController implements Initializable {
         return grainGrowth;
     }
 
-
     void draw() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         for (int i = 0; i < ySize; i++) {
             for (int j = 0; j < xSize; j++) {
-                int id = space.getCells()[i][j].getId();
+                int id = space.getCell(Coords.coords(j, i)).getId();
                 if (id != 0) {
                     if (!colorById.containsKey(id)) {
                         generateNewColor(id);
@@ -263,7 +263,7 @@ public class MainViewController implements Initializable {
         int x = (int) Math.ceil(event.getX() / cellSize);
         int y = (int) Math.ceil(event.getY() / cellSize);
 
-        int id = space.getCells()[y][x].getId();
+        int id = space.getCell(Coords.coords(x, y)).getId();
 
         if (id != 0) {
             if (selectedGrainsById.containsKey(id)) {
@@ -347,16 +347,12 @@ public class MainViewController implements Initializable {
 
 
     private void clearNotSelectedGrains() {
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                Cell cell = space.getCells()[i][j];
-                if (selectedGrainsById.containsKey(cell.getId())) {
-                    continue;
-                }
-                cell.setGrowable(true);
-                cell.setId(0);
-            }
-        }
+        space.getCellsByCoords().values().stream()
+                .filter(cell -> !selectedGrainsById.containsKey(cell.getId()))
+                .forEach(cell -> {
+                    cell.setId(0);
+                    cell.setGrowable(true);
+                });
         selectedGrainsById.remove(-1);
     }
 

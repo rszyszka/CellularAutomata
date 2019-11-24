@@ -12,14 +12,13 @@ import java.util.stream.Collectors;
 public class GrainBoundaryGenerator extends StructureGenerator {
 
     private LinkedList<Integer> idsToInclusionsConversion;
-    private List<Coords> coordsToLock;
     private Space space;
     private int boundarySize;
 
 
     public GrainBoundaryGenerator(Collection<Grain> grains, Space space, int boundarySize) {
         idsToInclusionsConversion = new LinkedList<>();
-        coordsToLock = new LinkedList<>();
+        cellsByCoordsToLock = new HashMap<>();
         this.space = space;
         this.boundarySize = boundarySize;
         this.grains = grains.stream()
@@ -29,18 +28,19 @@ public class GrainBoundaryGenerator extends StructureGenerator {
 
 
     public void generateAllBoundaries() {
-        determineAllCellsCoordsToLock();
+        determineCellsByCoordsToLock();
         setGrainBoundariesIds();
         blockCellsFromGrowing();
     }
 
 
-    private void determineAllCellsCoordsToLock() {
-        coordsToLock = grains.stream()
-                .map(Grain::getCoords)
-                .flatMap(Collection::stream)
-                .filter(coords -> space.getCell(coords).isGrainBoundary())
-                .collect(Collectors.toCollection(LinkedList::new));
+    @Override
+    protected void determineCellsByCoordsToLock() {
+        cellsByCoordsToLock = grains.stream()
+                .map(Grain::getCellsByCoords)
+                .flatMap(coordsCellMap -> coordsCellMap.entrySet().stream())
+                .filter(coordsCellEntry -> coordsCellEntry.getValue().isGrainBoundary())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
 
@@ -53,24 +53,20 @@ public class GrainBoundaryGenerator extends StructureGenerator {
 
 
     protected void determineSelectedCellsCoordsToLock() {
-        Set<Coords> boundariesCoords = grains.stream()
-                .map(Grain::getCoords)
-                .flatMap(Collection::stream)
-                .filter(coords -> space.getCell(coords).isGrainBoundary())
-                .collect(Collectors.toCollection(HashSet::new));
+        determineCellsByCoordsToLock();
 
-        Set<Coords> additionalBoundariesCoords = new HashSet<>(boundariesCoords);
-        boundariesCoords.forEach(coords -> {
-            List<Coords> neighboursCoords = space.getMooreNeighbourHood().findNeighboursCoords(coords);
-            neighboursCoords.forEach(neighbourCoords -> {
-                Cell cell = space.getCell(neighbourCoords);
-                if (cell.isGrainBoundary()) {
-                    additionalBoundariesCoords.add(neighbourCoords);
+        Map<Coords, Cell> additionalBoundariesCoords = new HashMap<>();
+        for (Map.Entry<Coords, Cell> coordsCells : cellsByCoordsToLock.entrySet()) {
+            List<Coords> neighboursCoords = space.getMooreNeighbourHood().findNeighboursCoords(coordsCells.getKey());
+            for (Coords neighbourCoords : neighboursCoords) {
+                Cell neighbour = space.getCell(neighbourCoords);
+                if (neighbour.isGrainBoundary()) {
+                    additionalBoundariesCoords.put(neighbourCoords, neighbour);
                 }
-            });
-        });
+            }
+        }
 
-        coordsToLock.addAll(additionalBoundariesCoords);
+        cellsByCoordsToLock.putAll(additionalBoundariesCoords);
     }
 
 
@@ -87,17 +83,15 @@ public class GrainBoundaryGenerator extends StructureGenerator {
     @Override
     protected void blockCellsFromGrowing() {
         InclusionsGenerator inclusionsGenerator = InclusionsGenerator.createInstance(0, boundarySize, space);
-        coordsToLock.forEach(inclusionsGenerator::placeInclusions);
+        cellsByCoordsToLock.keySet().forEach(inclusionsGenerator::placeInclusions);
     }
 
 
     public int computeGbPercentage() {
         int counter = 0;
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                if (space.getCells()[i][j].getId() == -1) {
-                    counter++;
-                }
+        for (Cell cell : space.getCellsByCoords().values()) {
+            if (cell.getId() == -1) {
+                counter++;
             }
         }
         return counter * 100 / (space.getSizeX() * space.getSizeY());

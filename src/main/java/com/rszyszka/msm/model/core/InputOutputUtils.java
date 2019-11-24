@@ -18,11 +18,9 @@ public class InputOutputUtils {
     public static void saveSpace(Space space, File file) throws FileNotFoundException {
         PrintWriter writer = new PrintWriter(file);
         writer.println(space.getSizeX() + ";" + space.getSizeY());
-        for (int i = 0; i < space.getSizeY(); i++) {
-            for (int j = 0; j < space.getSizeX(); j++) {
-                writer.println(j + ";" + i + ";" + space.getCells()[i][j].getId());
-            }
-        }
+        space.getCellsByCoords().forEach((coords, cell) ->
+                writer.println(coords.getX() + ";" + coords.getY() + ";" + cell.getId())
+        );
         writer.close();
     }
 
@@ -73,7 +71,7 @@ public class InputOutputUtils {
                     idByRGB.put(rgb, idCounter);
                     idCounter++;
                 }
-                Cell cell = newSpace.getCells()[i][j];
+                Cell cell = newSpace.getCell(Coords.coords(j, i));
                 cell.setId(idByRGB.get(rgb));
                 if (cell.getId() < 0) {
                     cell.setGrowable(false);
