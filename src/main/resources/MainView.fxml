@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
@@ -22,11 +23,19 @@
                     </center>
                 </BorderPane>
             </ScrollPane>
+            <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                  AnchorPane.topAnchor="0.0">
+                <AnchorPane HBox.hgrow="ALWAYS">
+                    <ProgressBar fx:id="progressBar" progress="0" AnchorPane.bottomAnchor="0.0"
+                                 AnchorPane.leftAnchor="0.0"
+                                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                </AnchorPane>
+            </HBox>
         </VBox>
         <Separator orientation="VERTICAL"/>
         <AnchorPane maxWidth="215.0">
-            <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                        AnchorPane.topAnchor="0.0">
                 <VBox alignment="CENTER" maxWidth="210.0">
                     <Separator>
                         <VBox.margin>
@@ -75,6 +84,16 @@
                         </VBox.margin>
                         <Label alignment="CENTER" text="Simulation Type"/>
                         <ComboBox fx:id="simulationTypeComboBox" prefWidth="210.0"/>
+                        <VBox>
+                            <HBox>
+                                <Label fx:id="iterationsLabel" minWidth="100.0" text="Iterations: "/>
+                                <TextField fx:id="iterationsTextField" text="20"/>
+                            </HBox>
+                            <HBox>
+                                <Label fx:id="gbEnergyLabel" minWidth="100.0" text="GB Energy: "/>
+                                <TextField fx:id="gbEnergyTextField" text="0.5"/>
+                            </HBox>
+                        </VBox>
                         <Label fx:id="probabilityTitleLabel" alignment="CENTER" text="Probability of Fourth Rule">
                             <VBox.margin>
                                 <Insets top="5.0"/>
@@ -142,15 +161,13 @@
                         </HBox>
 
                         <Button fx:id="generateGrainBoundariesButton" mnemonicParsing="false"
-                                onAction="#generateGrainBoundaries" prefWidth="210.0"
-                                text="Generate grain boundaries"/>
+                                onAction="#generateGrainBoundaries" prefWidth="210.0" text="Generate grain boundaries"/>
                         <HBox>
-                            <Button fx:id="clearGrainsButton" mnemonicParsing="false"
-                                    onAction="#clearGrains" prefWidth="210.0"
-                                    text="Clear Grains"/>
+                            <Button fx:id="clearGrainsButton" mnemonicParsing="false" onAction="#clearGrains"
+                                    prefWidth="210.0" text="Clear Grains"/>
                             <Label fx:id="gbPercentageLabel" minWidth="70.0">
                                 <HBox.margin>
-                                    <Insets top="5.0" left="15.0"/>
+                                    <Insets left="15.0" top="5.0"/>
                                 </HBox.margin>
                             </Label>
                         </HBox>

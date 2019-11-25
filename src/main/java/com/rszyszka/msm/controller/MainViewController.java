@@ -8,6 +8,7 @@ import com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator;
 import com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator;
 import com.rszyszka.msm.model.generator.structures.*;
 import com.rszyszka.msm.model.simulation.GrainGrowth;
+import com.rszyszka.msm.model.simulation.MonteCarloGrainGrowth;
 import com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth;
 import com.rszyszka.msm.model.simulation.SimpleGrainGrowth;
 import javafx.application.Platform;
@@ -39,6 +40,8 @@ public class MainViewController implements Initializable {
     @FXML
     private Canvas canvas;
     @FXML
+    private ProgressBar progressBar;
+    @FXML
     private TextField xSizeTextField;
     @FXML
     private TextField ySizeTextField;
@@ -48,7 +51,15 @@ public class MainViewController implements Initializable {
     private TextField inclusionsNumberTextField;
     @FXML
     private TextField inclusionSizeTextField;
+    @FXML
+    private TextField gbEnergyTextField;
+    @FXML
+    private TextField iterationsTextField;
     private final ObservableMap<Integer, Grain> selectedGrainsById = FXCollections.observableHashMap();
+    @FXML
+    private Label gbEnergyLabel;
+    @FXML
+    private Label iterationsLabel;
     @FXML
     private Label spaceSizeLabel;
     @FXML
@@ -132,7 +143,13 @@ public class MainViewController implements Initializable {
 
     public void generateNucleons() {
         nucleonsNumber = Integer.parseInt(nucleonsNumberTextField.getText());
-        NucleonsGenerator.putNucleonsRandomly(nucleonsNumber, space);
+
+        if (simulationTypeComboBox.getValue() == SimulationType.MONTE_CARLO_GRAIN_GROWTH) {
+            NucleonsGenerator.fillSpaceWithNumberOfUniqueIds(nucleonsNumber, space);
+        } else {
+            NucleonsGenerator.putNucleonsRandomly(nucleonsNumber, space);
+        }
+
         draw();
     }
 
@@ -154,14 +171,19 @@ public class MainViewController implements Initializable {
 
 
     private GrainGrowth createGrainGrowthInstance() {
-        GrainGrowth grainGrowth;
-        if (simulationTypeComboBox.getValue() == SimulationType.SHAPE_CONTROL_GRAIN_GROWTH) {
-            double probability = probabilitySlider.getValue();
-            grainGrowth = new ShapeControlGrainGrowth(space, probability);
-        } else {
-            grainGrowth = new SimpleGrainGrowth(space);
+        switch (simulationTypeComboBox.getValue()) {
+            case SHAPE_CONTROL_GRAIN_GROWTH:
+                double probability = probabilitySlider.getValue();
+                return new ShapeControlGrainGrowth(space, probability);
+
+            case MONTE_CARLO_GRAIN_GROWTH:
+                int iterations = Integer.parseInt(iterationsTextField.getText());
+                double gbEnergy = Double.parseDouble(gbEnergyTextField.getText());
+                return new MonteCarloGrainGrowth(space, iterations, gbEnergy);
+
+            default:
+                return new SimpleGrainGrowth(space);
         }
-        return grainGrowth;
     }
 
     void draw() {
@@ -380,7 +402,9 @@ public class MainViewController implements Initializable {
         initializeGeneratorTextField(nucleonsNumberTextField, nucleonsNumber);
         initializeInclusionControls();
         initializeProbabilityControls();
+        initializeMonteCarloControls();
         setProbabilityControlsManagedProperty(false);
+        setMonteCarloControlsManagedProperty(false);
         initializeSimulationTypeComboBox();
         initializeStructureTypeComboBox();
         numberOfGrainsSelected.setText("0");
@@ -399,6 +423,15 @@ public class MainViewController implements Initializable {
                 setProbabilityControlsManagedProperty(true);
             } else {
                 setProbabilityControlsManagedProperty(false);
+            }
+            if (newValue == SimulationType.MONTE_CARLO_GRAIN_GROWTH) {
+                numberOfNucleonsLabel.setText("Number of Unique ids");
+                generateNucleonsButton.setText("Fill space");
+                setMonteCarloControlsManagedProperty(true);
+            } else {
+                setMonteCarloControlsManagedProperty(false);
+                numberOfNucleonsLabel.setText("Number of Nucleons");
+                generateNucleonsButton.setText("Generate");
             }
         });
     }
@@ -426,6 +459,29 @@ public class MainViewController implements Initializable {
         probabilitySlider.visibleProperty().bind(probabilitySlider.managedProperty());
         probabilityLabel.visibleProperty().bind(probabilityLabel.managedProperty());
         probabilityTitleLabel.visibleProperty().bind(probabilityTitleLabel.managedProperty());
+    }
+
+
+    private void initializeMonteCarloControls() {
+        iterationsTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!iterationsTextField.getText().matches("[1-9][0-9]+")) {
+                    iterationsTextField.setText(String.valueOf(20));
+                }
+            }
+        });
+        gbEnergyTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!gbEnergyTextField.getText().matches("0\\.[1-9][0-9]*|1\\.0")) {
+                    gbEnergyTextField.setText(String.valueOf(0.5));
+                }
+            }
+        });
+
+        iterationsTextField.visibleProperty().bind(iterationsTextField.managedProperty());
+        gbEnergyTextField.visibleProperty().bind(gbEnergyTextField.managedProperty());
+        iterationsLabel.visibleProperty().bind(iterationsLabel.managedProperty());
+        gbEnergyLabel.visibleProperty().bind(gbEnergyLabel.managedProperty());
     }
 
 
@@ -493,6 +549,14 @@ public class MainViewController implements Initializable {
     }
 
 
+    private void setMonteCarloControlsManagedProperty(boolean managed) {
+        gbEnergyTextField.setManaged(managed);
+        gbEnergyLabel.setManaged(managed);
+        iterationsLabel.setManaged(managed);
+        iterationsTextField.setManaged(managed);
+    }
+
+
     private void setProbabilityControlsManagedProperty(boolean managed) {
         probabilitySlider.setManaged(managed);
         probabilityLabel.setManaged(managed);
@@ -521,6 +585,8 @@ public class MainViewController implements Initializable {
         controls.add(lockSelectedGrainsButton);
         controls.add(resetSelectionButton);
         controls.add(generateGrainBoundariesButton);
+        controls.add(iterationsTextField);
+        controls.add(gbEnergyTextField);
     }
 
 

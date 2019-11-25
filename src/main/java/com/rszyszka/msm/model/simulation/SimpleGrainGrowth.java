@@ -12,13 +12,11 @@ import java.util.Map;
 public class SimpleGrainGrowth extends GrainGrowth {
 
     protected boolean changed;
-
-    protected Space space;
     private Space nextIterationSpace;
 
 
     public SimpleGrainGrowth(Space space) {
-        this.space = space;
+        super(space);
         nextIterationSpace = new Space(space);
     }
 
@@ -95,9 +93,5 @@ public class SimpleGrainGrowth extends GrainGrowth {
         space.getCellsByCoords().forEach((coords, cell) -> cell.setId(nextIterationSpace.getCell(coords).getId()));
     }
 
-
-    public Space getSpace() {
-        return space;
-    }
 
 }

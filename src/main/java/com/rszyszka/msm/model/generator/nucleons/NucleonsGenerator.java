@@ -25,4 +25,15 @@ public class NucleonsGenerator {
         }
     }
 
+
+    public static void fillSpaceWithNumberOfUniqueIds(int numberOfUniqueIds, Space space) {
+        Random random = new Random();
+        List<Coords> freeCellCoords = GeneratorUtils.determineFreeCellCords(space);
+        int firstIdToPut = space.findMaxCellId() + 1;
+
+        for (Coords coords : freeCellCoords) {
+            space.getCell(coords).setId(random.nextInt(numberOfUniqueIds) + firstIdToPut);
+        }
+    }
+
 }
