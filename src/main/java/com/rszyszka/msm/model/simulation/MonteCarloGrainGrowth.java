@@ -4,7 +4,11 @@ import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 
 public class MonteCarloGrainGrowth extends GrainGrowth {
@@ -29,23 +33,35 @@ public class MonteCarloGrainGrowth extends GrainGrowth {
 
 
     private void performIteration() {
-        Random random = new Random();
-        List<Map.Entry<Coords, Cell>> cellByCoordsEntryList = new ArrayList<>(space.getCellsByCoords().entrySet());
+        List<Map.Entry<Coords, Cell>> cellByCoordsEntryList = space.getCellsByCoords().entrySet()
+                .stream()
+                .filter(coordsCellEntry -> coordsCellEntry.getValue().isGrowable())
+                .collect(Collectors.toList());
+
         Collections.shuffle(cellByCoordsEntryList);
 
-        for (Map.Entry<Coords, Cell> randomizedCellByCoords : cellByCoordsEntryList) {
-            List<Cell> neighbours = space.findNeighbours(randomizedCellByCoords.getKey());
-            Cell cell = randomizedCellByCoords.getValue();
-
-            double currentEnergy = countEnergy(cell.getId(), neighbours);
-            int newId = neighbours.get(random.nextInt(neighbours.size())).getId();
-            double newEnergy = countEnergy(newId, neighbours);
-
-            if (newEnergy <= currentEnergy) {
-                cell.setId(newId);
+        cellByCoordsEntryList.forEach(randomizedCellByCoords -> {
+            List<Cell> neighbours = space.findNeighbours(randomizedCellByCoords.getKey())
+                    .stream()
+                    .filter(Cell::isGrowable)
+                    .collect(Collectors.toList());
+            if (neighbours.size() > 0) {
+                performMonteCarloGrowth(neighbours, randomizedCellByCoords.getValue());
             }
-        }
+        });
 
+    }
+
+    private void performMonteCarloGrowth(List<Cell> neighbours, Cell cell) {
+        Random random = new Random();
+
+        double currentEnergy = countEnergy(cell.getId(), neighbours);
+        int newId = neighbours.get(random.nextInt(neighbours.size())).getId();
+        double newEnergy = countEnergy(newId, neighbours);
+
+        if (newEnergy <= currentEnergy) {
+            cell.setId(newId);
+        }
     }
 
 
