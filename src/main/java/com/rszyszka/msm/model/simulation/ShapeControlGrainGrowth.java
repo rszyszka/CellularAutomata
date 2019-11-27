@@ -6,6 +6,7 @@ import com.rszyszka.msm.model.core.Space;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ShapeControlGrainGrowth extends SimpleGrainGrowth {
@@ -61,11 +62,11 @@ public class ShapeControlGrainGrowth extends SimpleGrainGrowth {
 
 
     private int getIdOccurringEqualToAmount(List<Cell> neighbours, int neededAmount) {
-        HashMap<Integer, Integer> amountByGrainId = new HashMap<>();
+        Map<Integer, Integer> amountByGrainId = new HashMap<>();
 
         for (Cell cell : neighbours) {
             int id = cell.getId();
-            if (id == 0 || id == -1) {
+            if (id == 0 || !cell.isGrowable()) {
                 continue;
             }
             if (amountByGrainId.containsKey(id)) {

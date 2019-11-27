@@ -4,6 +4,7 @@ import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +34,6 @@ public class SimpleGrainGrowth extends GrainGrowth {
     }
 
 
-    private double countProgress() {
-        int filledCellsNumber = (int) space.getCellsByCoords().values().stream()
-                .filter(cell -> cell.getId() != 0)
-                .count();
-
-        return filledCellsNumber / (double) (space.getSizeX() * space.getSizeY());
-    }
-
-
     private void performIteration() {
         changed = false;
         space.getCellsByCoords().entrySet().stream()
@@ -59,7 +51,12 @@ public class SimpleGrainGrowth extends GrainGrowth {
 
 
     private int getMostFrequentId(List<Cell> neighbours) {
-        HashMap<Integer, Integer> amountByGrainId = new HashMap<>();
+        return determineMostFrequentId(designateAmountByGrainId(neighbours));
+    }
+
+
+    private Map<Integer, Integer> designateAmountByGrainId(List<Cell> neighbours) {
+        Map<Integer, Integer> amountByGrainId = new HashMap<>();
 
         for (Cell cell : neighbours) {
             int id = cell.getId();
@@ -74,18 +71,15 @@ public class SimpleGrainGrowth extends GrainGrowth {
             }
         }
 
-        int mostFrequentId = 0;
-        int mostFrequentIdCounter = 0;
-        for (Map.Entry<Integer, Integer> amountByGrainIdEntry : amountByGrainId.entrySet()) {
-            int grainId = amountByGrainIdEntry.getKey();
-            int amount = amountByGrainIdEntry.getValue();
-            if (amount > mostFrequentIdCounter) {
-                mostFrequentId = grainId;
-                mostFrequentIdCounter = amount;
-            }
-        }
+        return amountByGrainId;
+    }
 
-        return mostFrequentId;
+
+    private int determineMostFrequentId(Map<Integer, Integer> amountByGrainId) {
+        return amountByGrainId.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .orElseGet(() -> new AbstractMap.SimpleEntry<>(0, 0))
+                .getKey();
     }
 
 
@@ -99,9 +93,17 @@ public class SimpleGrainGrowth extends GrainGrowth {
     }
 
 
+    private double countProgress() {
+        int filledCellsNumber = (int) space.getCellsByCoords().values().stream()
+                .filter(cell -> cell.getId() != 0)
+                .count();
+
+        return filledCellsNumber / (double) (space.getSizeX() * space.getSizeY());
+    }
+
+
     private void updateSpace() {
         space.getCellsByCoords().forEach((coords, cell) -> cell.setId(nextIterationSpace.getCell(coords).getId()));
     }
-
 
 }
