@@ -28,6 +28,7 @@ public class MonteCarloGrainGrowth extends GrainGrowth {
     public void simulateGrainGrowth() {
         for (int i = 0; i < numberOfIterations; i++) {
             performIteration();
+            updateProgress(i / (double) numberOfIterations);
         }
     }
 

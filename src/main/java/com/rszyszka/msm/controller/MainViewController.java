@@ -209,6 +209,7 @@ public class MainViewController implements Initializable {
             }
         }
         enableNodes();
+        progressBar.setProgress(0.0);
     }
 
 
@@ -607,4 +608,8 @@ public class MainViewController implements Initializable {
         });
     }
 
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
 }

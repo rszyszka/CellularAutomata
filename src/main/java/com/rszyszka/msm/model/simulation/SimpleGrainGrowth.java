@@ -27,8 +27,18 @@ public class SimpleGrainGrowth extends GrainGrowth {
         changed = true;
         while (changed) {
             performIteration();
+            updateProgress(countProgress());
         }
         space.determineBorderCells();
+    }
+
+
+    private double countProgress() {
+        int filledCellsNumber = (int) space.getCellsByCoords().values().stream()
+                .filter(cell -> cell.getId() != 0)
+                .count();
+
+        return filledCellsNumber / (double) (space.getSizeX() * space.getSizeY());
     }
 
 
