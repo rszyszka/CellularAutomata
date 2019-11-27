@@ -4,10 +4,7 @@ import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 public class MonteCarloGrainGrowth extends GrainGrowth {
@@ -31,12 +28,12 @@ public class MonteCarloGrainGrowth extends GrainGrowth {
     }
 
 
-    public void performIteration() {
+    private void performIteration() {
         Random random = new Random();
         List<Map.Entry<Coords, Cell>> cellByCoordsEntryList = new ArrayList<>(space.getCellsByCoords().entrySet());
+        Collections.shuffle(cellByCoordsEntryList);
 
-        for (int size = space.getSizeX() * space.getSizeY(); size > 0; size--) {
-            Map.Entry<Coords, Cell> randomizedCellByCoords = cellByCoordsEntryList.remove(random.nextInt(size));
+        for (Map.Entry<Coords, Cell> randomizedCellByCoords : cellByCoordsEntryList) {
             List<Cell> neighbours = space.findNeighbours(randomizedCellByCoords.getKey());
             Cell cell = randomizedCellByCoords.getValue();
 
