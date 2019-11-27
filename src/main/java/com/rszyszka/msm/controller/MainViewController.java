@@ -186,6 +186,7 @@ public class MainViewController implements Initializable {
         }
     }
 
+
     void draw() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         for (int i = 0; i < ySize; i++) {
@@ -391,6 +392,11 @@ public class MainViewController implements Initializable {
     }
 
 
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         colorById.put(-1, Color.BLACK);
@@ -528,7 +534,6 @@ public class MainViewController implements Initializable {
             }
         });
 
-
         gbSizeTextField.setText("1");
         gbSizeTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -547,6 +552,24 @@ public class MainViewController implements Initializable {
                 new FileChooser.ExtensionFilter("PNG", "*.png")
         );
         fileChooser.setInitialDirectory(new File("."));
+    }
+
+
+    private void initializeGeneratorTextField(TextField generatorTextField, int number) {
+        generatorTextField.setText(String.valueOf(number));
+
+        generatorTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!generatorTextField.getText().matches("[1-9][0-9]{0,9}")) {
+                    generatorTextField.setText(String.valueOf(number));
+                } else {
+                    int newNucleonsNumber = Integer.parseInt(generatorTextField.getText());
+                    if (newNucleonsNumber > xSize * ySize) {
+                        generatorTextField.setText(String.valueOf(number));
+                    }
+                }
+            }
+        });
     }
 
 
@@ -590,26 +613,4 @@ public class MainViewController implements Initializable {
         controls.add(gbEnergyTextField);
     }
 
-
-    private void initializeGeneratorTextField(TextField generatorTextField, int number) {
-        generatorTextField.setText(String.valueOf(number));
-
-        generatorTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                if (!generatorTextField.getText().matches("[1-9][0-9]{0,9}")) {
-                    generatorTextField.setText(String.valueOf(number));
-                } else {
-                    int newNucleonsNumber = Integer.parseInt(generatorTextField.getText());
-                    if (newNucleonsNumber > xSize * ySize) {
-                        generatorTextField.setText(String.valueOf(number));
-                    }
-                }
-            }
-        });
-    }
-
-
-    public ProgressBar getProgressBar() {
-        return progressBar;
-    }
 }

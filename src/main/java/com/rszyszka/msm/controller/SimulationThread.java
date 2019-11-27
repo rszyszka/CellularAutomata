@@ -16,18 +16,20 @@ public class SimulationThread extends Thread implements Observer {
     SimulationThread(MainViewController controller, GrainGrowth grainGrowth) {
         this.controller = controller;
         this.grainGrowth = grainGrowth;
+        this.grainGrowth.addObserver(this);
     }
 
 
     @Override
     public void run() {
-        this.grainGrowth.addObserver(this);
         grainGrowth.simulateGrainGrowth();
         Platform.runLater(() -> controller.draw());
     }
+
 
     @Override
     public void update(Observable o, Object arg) {
         controller.getProgressBar().setProgress((double) arg);
     }
+
 }

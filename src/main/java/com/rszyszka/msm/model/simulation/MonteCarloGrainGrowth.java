@@ -27,8 +27,8 @@ public class MonteCarloGrainGrowth extends GrainGrowth {
     @Override
     public void simulateGrainGrowth() {
         for (int i = 0; i < numberOfIterations; i++) {
-            performIteration();
             updateProgress(i / (double) numberOfIterations);
+            performIteration();
         }
     }
 
@@ -52,6 +52,7 @@ public class MonteCarloGrainGrowth extends GrainGrowth {
         });
 
     }
+
 
     private void performMonteCarloGrowth(List<Cell> neighbours, Cell cell) {
         Random random = new Random();
