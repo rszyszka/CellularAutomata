@@ -4,14 +4,23 @@ package com.rszyszka.msm.model.core;
 public class Cell {
 
     private int id;
+    private double energyH;
     private boolean growable;
     private boolean grainBoundary;
+    private boolean recrystallized;
 
 
     public Cell() {
         id = 0;
+        energyH = 0.0;
         growable = true;
         grainBoundary = false;
+        recrystallized = false;
+    }
+
+    public void copyPropertiesFromOtherCell(Cell cell) {
+        this.id = cell.id;
+        this.growable = cell.growable;
     }
 
 
@@ -22,6 +31,16 @@ public class Cell {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+
+    public double getEnergyH() {
+        return energyH;
+    }
+
+
+    public void setEnergyH(double energyH) {
+        this.energyH = energyH;
     }
 
 
@@ -45,9 +64,13 @@ public class Cell {
     }
 
 
-    public void copyPropertiesFromOtherCell(Cell cell) {
-        this.id = cell.id;
-        this.growable = cell.growable;
+    public boolean isRecrystallized() {
+        return recrystallized;
+    }
+
+
+    public void setRecrystallized(boolean recrystallized) {
+        this.recrystallized = recrystallized;
     }
 
 }
