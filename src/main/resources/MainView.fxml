@@ -75,8 +75,7 @@
                                                 <Insets left="8.0" top="5.0"/>
                                             </HBox.margin>
                                         </Label>
-                                        <Label fx:id="numberOfGrainsSelected" alignment="CENTER"
-                                               minWidth="20.0">
+                                        <Label fx:id="numberOfGrainsSelected" alignment="CENTER" minWidth="20.0">
                                             <HBox.margin>
                                                 <Insets right="8.0" top="5.0"/>
                                             </HBox.margin>
@@ -119,6 +118,47 @@
                                         <Insets bottom="10.0" top="10.0"/>
                                     </VBox.margin>
                                 </Separator>
+                                <VBox>
+                                    <Label alignment="CENTER" prefWidth="210.0" text="Energy Distribution"/>
+                                    <ComboBox fx:id="energyDistributionComboBox" prefWidth="215.0">
+                                        <VBox.margin>
+                                            <Insets top="10.0"/>
+                                        </VBox.margin>
+                                    </ComboBox>
+                                    <HBox>
+                                        <VBox.margin>
+                                            <Insets top="5.0"/>
+                                        </VBox.margin>
+                                        <Label fx:id="energyInsideLabel" prefHeight="18.0" prefWidth="200.0"
+                                               text="Energy Inside"/>
+                                        <TextField fx:id="energyInsideTextField"/>
+                                    </HBox>
+                                </VBox>
+                                <HBox>
+                                    <Label fx:id="energyOnEdgesLabel" prefHeight="18.0" prefWidth="200.0"
+                                           text="Energy on edges"/>
+                                    <TextField fx:id="energyOnEdgesTextField"/>
+                                </HBox>
+                                <HBox>
+                                    <VBox.margin>
+                                        <Insets top="5.0"/>
+                                    </VBox.margin>
+                                    <Button fx:id="distributeEnergyButton" mnemonicParsing="false"
+                                            onAction="#distributeEnergy" prefHeight="26.0" prefWidth="115.0"
+                                            text="Distribute">
+                                        <HBox.margin>
+                                            <Insets right="5.0"/>
+                                        </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="toggleEnergyButton" mnemonicParsing="false"
+                                            onAction="#toggleEnergyDistribution" prefHeight="26.0" prefWidth="115.0"
+                                            text="Show">
+                                        <HBox.margin>
+                                            <Insets left="5.0"/>
+                                        </HBox.margin>
+                                    </Button>
+                                </HBox>
+                                <Separator prefWidth="200.0"/>
                             </VBox>
                         </top>
                     </BorderPane>
@@ -157,8 +197,7 @@
                                     </VBox.margin>
                                 </Separator>
                                 <VBox>
-                                    <Label fx:id="numberOfNucleonsLabel" alignment="CENTER"
-                                           text="Number of Nucleons"/>
+                                    <Label fx:id="numberOfNucleonsLabel" alignment="CENTER" text="Number of Nucleons"/>
                                     <TextField fx:id="nucleonsNumberTextField" alignment="CENTER"/>
                                     <Button fx:id="generateNucleonsButton" mnemonicParsing="false"
                                             onAction="#generateNucleons" prefWidth="210.0" text="Generate">
@@ -197,8 +236,7 @@
                                     <Slider fx:id="probabilitySlider" value="50.0"/>
                                     <Label fx:id="probabilityLabel" alignment="CENTER" prefWidth="210"/>
                                     <Button fx:id="performGrainGrowthButton" mnemonicParsing="false"
-                                            onAction="#performGrainGrowth" prefWidth="210.0"
-                                            text="Perform Simulation">
+                                            onAction="#performGrainGrowth" prefWidth="210.0" text="Perform Simulation">
                                         <VBox.margin>
                                             <Insets top="10.0"/>
                                         </VBox.margin>

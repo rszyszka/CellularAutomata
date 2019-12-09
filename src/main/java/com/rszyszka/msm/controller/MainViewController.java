@@ -3,6 +3,8 @@ package com.rszyszka.msm.controller;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.InputOutputUtils;
 import com.rszyszka.msm.model.core.Space;
+import com.rszyszka.msm.model.generator.energy.HeterogeneousEnergyDistributor;
+import com.rszyszka.msm.model.generator.energy.HomogeneousEnergyDistributor;
 import com.rszyszka.msm.model.generator.inclusions.InclusionType;
 import com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator;
 import com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator;
@@ -71,7 +73,15 @@ public class MainViewController implements Initializable {
     @FXML
     private TextField gbSizeTextField;
     @FXML
+    private TextField energyInsideTextField;
+    @FXML
+    private TextField energyOnEdgesTextField;
+    @FXML
     private Label numberOfNucleonsLabel;
+    @FXML
+    private Label energyOnEdgesLabel;
+    @FXML
+    private Label energyInsideLabel;
     @FXML
     private Button initializeButton;
     @FXML
@@ -80,6 +90,10 @@ public class MainViewController implements Initializable {
     private Button generateInclusionsButton;
     @FXML
     private Button performGrainGrowthButton;
+    @FXML
+    private Button toggleEnergyButton;
+    @FXML
+    private Button distributeEnergyButton;
     @FXML
     private Label gbPercentageLabel;
     @FXML
@@ -96,6 +110,8 @@ public class MainViewController implements Initializable {
     private ComboBox<SimulationType> simulationTypeComboBox;
     @FXML
     private ComboBox<StructureType> structureTypeComboBox;
+    @FXML
+    private ComboBox<EnergyDistributionType> energyDistributionComboBox;
     @FXML
     private Button resetSelectionButton;
     @FXML
@@ -386,6 +402,47 @@ public class MainViewController implements Initializable {
         draw();
     }
 
+    private boolean showingEnergy = false;
+
+    public void distributeEnergy() {
+        if (EnergyDistributionType.HETEROGENEOUS == energyDistributionComboBox.getValue()) {
+            double energyInside = Double.parseDouble(energyInsideTextField.getText());
+            double energyOnEdges = Double.parseDouble(energyOnEdgesTextField.getText());
+            HeterogeneousEnergyDistributor.distribute(space, energyInside, energyOnEdges);
+        } else {
+            double energyValue = Double.parseDouble(energyInsideTextField.getText());
+            HomogeneousEnergyDistributor.distribute(space, energyValue);
+        }
+    }
+
+    public void toggleEnergyDistribution() {
+        if (showingEnergy) {
+            draw();
+            toggleEnergyButton.setText("Show");
+            showingEnergy = false;
+        } else {
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            int energyInside = Integer.parseInt(energyInsideTextField.getText());
+            int energyOnEdges = Integer.parseInt(energyOnEdgesTextField.getText());
+            int min = (int) Math.floor(energyInside - energyInside * 0.1);
+            int max = energyDistributionComboBox.getValue() == EnergyDistributionType.HETEROGENEOUS ?
+                    (int) Math.ceil(energyOnEdges + energyOnEdges * 0.1) :
+                    (int) Math.ceil(energyInside + energyInside * 0.1) + 2;
+
+            for (int i = 0; i < ySize; i++) {
+                for (int j = 0; j < xSize; j++) {
+                    double cellEnergy = space.getCell(Coords.coords(j, i)).getEnergyH();
+                    double fraction = (cellEnergy - min) / (max - min);
+                    gc.setFill(Color.BLUE.interpolate(Color.GREENYELLOW, fraction));
+                    gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                }
+            }
+
+            toggleEnergyButton.setText("Hide");
+            showingEnergy = true;
+        }
+    }
+
 
     public void closeApp() {
         Platform.exit();
@@ -407,6 +464,7 @@ public class MainViewController implements Initializable {
         initializeEmptySpace();
         nucleonsNumber = 100;
         initializeGeneratorTextField(nucleonsNumberTextField, nucleonsNumber);
+        initializeEnergyDistributionTextFields();
         initializeInclusionControls();
         initializeProbabilityControls();
         initializeMonteCarloControls();
@@ -414,6 +472,7 @@ public class MainViewController implements Initializable {
         setMonteCarloControlsManagedProperty(false);
         initializeSimulationTypeComboBox();
         initializeStructureTypeComboBox();
+        initializeEnergyDistributionComboBox();
         numberOfGrainsSelected.setText("0");
         selectedGrainsById.addListener((MapChangeListener<Integer, Grain>) change ->
                 numberOfGrainsSelected.setText(String.valueOf(selectedGrainsById.size()))
@@ -447,6 +506,23 @@ public class MainViewController implements Initializable {
     private void initializeStructureTypeComboBox() {
         structureTypeComboBox.setItems(FXCollections.observableArrayList(StructureType.values()));
         structureTypeComboBox.getSelectionModel().selectFirst();
+    }
+
+
+    private void initializeEnergyDistributionComboBox() {
+        energyDistributionComboBox.setItems(FXCollections.observableArrayList(EnergyDistributionType.values()));
+        energyDistributionComboBox.getSelectionModel().selectFirst();
+        energyDistributionComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == EnergyDistributionType.HETEROGENEOUS) {
+                energyOnEdgesTextField.setManaged(true);
+                energyOnEdgesLabel.setManaged(true);
+                energyInsideLabel.setText("Energy Inside");
+            } else {
+                energyOnEdgesTextField.setManaged(false);
+                energyOnEdgesLabel.setManaged(false);
+                energyInsideLabel.setText("Energy Value");
+            }
+        });
     }
 
 
@@ -573,6 +649,32 @@ public class MainViewController implements Initializable {
     }
 
 
+    private void initializeEnergyDistributionTextFields() {
+        energyInsideTextField.setText("2");
+        energyOnEdgesTextField.setText("7");
+
+        energyInsideTextField.visibleProperty().bind(energyInsideTextField.managedProperty());
+        energyOnEdgesTextField.visibleProperty().bind(energyOnEdgesTextField.managedProperty());
+        energyOnEdgesLabel.visibleProperty().bind(energyOnEdgesLabel.managedProperty());
+
+        energyInsideTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!energyInsideTextField.getText().matches("\\d+")) {
+                    energyInsideTextField.setText("2");
+                }
+            }
+        });
+
+        energyOnEdgesTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                if (!energyOnEdgesTextField.getText().matches("\\d+")) {
+                    energyOnEdgesTextField.setText("7");
+                }
+            }
+        });
+    }
+
+
     private void setMonteCarloControlsManagedProperty(boolean managed) {
         gbEnergyTextField.setManaged(managed);
         gbEnergyLabel.setManaged(managed);
@@ -589,28 +691,34 @@ public class MainViewController implements Initializable {
 
 
     private void addAllControlsToList() {
-        controls = new LinkedList<>();
-        controls.add(nucleonsNumberTextField);
-        controls.add(inclusionsNumberTextField);
-        controls.add(inclusionSizeTextField);
-        controls.add(inclusionTypeComboBox);
-        controls.add(xSizeTextField);
-        controls.add(ySizeTextField);
-        controls.add(initializeButton);
-        controls.add(gbSizeTextField);
-        controls.add(clearGrainsButton);
-        controls.add(generateNucleonsButton);
-        controls.add(generateInclusionsButton);
-        controls.add(performGrainGrowthButton);
-        controls.add(menuBar);
-        controls.add(simulationTypeComboBox);
-        controls.add(probabilitySlider);
-        controls.add(structureTypeComboBox);
-        controls.add(lockSelectedGrainsButton);
-        controls.add(resetSelectionButton);
-        controls.add(generateGrainBoundariesButton);
-        controls.add(iterationsTextField);
-        controls.add(gbEnergyTextField);
+        controls = new LinkedList<>(Arrays.asList(
+                nucleonsNumberTextField,
+                energyOnEdgesTextField,
+                energyInsideTextField,
+                inclusionsNumberTextField,
+                inclusionSizeTextField,
+                inclusionTypeComboBox,
+                xSizeTextField,
+                ySizeTextField,
+                initializeButton,
+                gbSizeTextField,
+                clearGrainsButton,
+                generateNucleonsButton,
+                generateInclusionsButton,
+                performGrainGrowthButton,
+                distributeEnergyButton,
+                toggleEnergyButton,
+                menuBar,
+                simulationTypeComboBox,
+                probabilitySlider,
+                structureTypeComboBox,
+                energyDistributionComboBox,
+                lockSelectedGrainsButton,
+                resetSelectionButton,
+                generateGrainBoundariesButton,
+                iterationsTextField,
+                gbEnergyTextField
+        ));
     }
 
 }
