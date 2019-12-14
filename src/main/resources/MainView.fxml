@@ -206,7 +206,7 @@
                                     </Separator>
                                     <VBox>
                                         <Label alignment="CENTER" text="Nucleation" prefWidth="200.0"/>
-
+                                        <ComboBox fx:id="nucleonsLocationComboBox" prefWidth="210.0"/>
                                         <Label fx:id="numberOfNucleonsLabel" alignment="CENTER"
                                                text="Number of Nucleons"/>
                                         <TextField fx:id="nucleonsNumberTextField" alignment="CENTER"/>

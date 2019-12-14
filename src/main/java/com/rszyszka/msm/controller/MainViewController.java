@@ -8,6 +8,7 @@ import com.rszyszka.msm.model.generator.energy.HomogeneousEnergyDistributor;
 import com.rszyszka.msm.model.generator.inclusions.InclusionType;
 import com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator;
 import com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator;
+import com.rszyszka.msm.model.generator.nucleons.SRXNucleonsGenerator;
 import com.rszyszka.msm.model.generator.structures.*;
 import com.rszyszka.msm.model.simulation.GrainGrowth;
 import com.rszyszka.msm.model.simulation.MonteCarloGrainGrowth;
@@ -113,6 +114,8 @@ public class MainViewController implements Initializable {
     @FXML
     private ComboBox<EnergyDistributionType> energyDistributionComboBox;
     @FXML
+    private ComboBox<NucleonsLocation> nucleonsLocationComboBox;
+    @FXML
     private Button resetSelectionButton;
     @FXML
     private Button clearGrainsButton;
@@ -160,10 +163,20 @@ public class MainViewController implements Initializable {
     public void generateNucleons() {
         nucleonsNumber = Integer.parseInt(nucleonsNumberTextField.getText());
 
-        if (simulationTypeComboBox.getValue() == SimulationType.MONTE_CARLO_GRAIN_GROWTH) {
-            NucleonsGenerator.fillSpaceWithNumberOfUniqueIds(nucleonsNumber, space);
-        } else {
-            NucleonsGenerator.putNucleonsRandomly(nucleonsNumber, space);
+        switch (simulationTypeComboBox.getValue()) {
+            case MONTE_CARLO_GRAIN_GROWTH:
+                NucleonsGenerator.fillSpaceWithNumberOfUniqueIds(nucleonsNumber, space);
+                break;
+            case SRX_GRAIN_GROWTH:
+                if (nucleonsLocationComboBox.getValue() == NucleonsLocation.GRAIN_BOUNDARIES) {
+                    SRXNucleonsGenerator.putNucleonsOnGrainBoundaries(nucleonsNumber, space);
+                } else {
+                    SRXNucleonsGenerator.putNucleonsAnywhere(nucleonsNumber, space);
+                }
+                break;
+            default:
+                NucleonsGenerator.putNucleonsRandomly(nucleonsNumber, space);
+                break;
         }
 
         draw();
@@ -456,23 +469,36 @@ public class MainViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        nucleonsNumber = 100;
         colorById.put(-1, Color.BLACK);
         colorById.put(-2, Color.MAGENTA);
         addAllControlsToList();
         initializeFileChooser();
         initializeSizeTextFields();
         initializeEmptySpace();
-        nucleonsNumber = 100;
         initializeGeneratorTextField(nucleonsNumberTextField, nucleonsNumber);
         initializeEnergyDistributionTextFields();
         initializeInclusionControls();
         initializeProbabilityControls();
         initializeMonteCarloControls();
+        initializeSRXControls();
         setProbabilityControlsManagedProperty(false);
         setMonteCarloControlsManagedProperty(false);
         initializeSimulationTypeComboBox();
         initializeStructureTypeComboBox();
         initializeEnergyDistributionComboBox();
+        initializeGrainSelectionModules();
+    }
+
+    private void initializeSRXControls() {
+        nucleonsLocationComboBox.setItems(FXCollections.observableArrayList(NucleonsLocation.values()));
+        nucleonsLocationComboBox.getSelectionModel().selectFirst();
+        nucleonsLocationComboBox.visibleProperty().bind(nucleonsLocationComboBox.managedProperty());
+        nucleonsLocationComboBox.setManaged(false);
+    }
+
+
+    private void initializeGrainSelectionModules() {
         numberOfGrainsSelected.setText("0");
         selectedGrainsById.addListener((MapChangeListener<Integer, Grain>) change ->
                 numberOfGrainsSelected.setText(String.valueOf(selectedGrainsById.size()))
@@ -498,6 +524,11 @@ public class MainViewController implements Initializable {
                 setMonteCarloControlsManagedProperty(false);
                 numberOfNucleonsLabel.setText("Number of Nucleons");
                 generateNucleonsButton.setText("Generate");
+            }
+            if (newValue == SimulationType.SRX_GRAIN_GROWTH) {
+                nucleonsLocationComboBox.setManaged(true);
+            } else {
+                nucleonsLocationComboBox.setManaged(false);
             }
         });
     }
@@ -698,6 +729,7 @@ public class MainViewController implements Initializable {
                 inclusionsNumberTextField,
                 inclusionSizeTextField,
                 inclusionTypeComboBox,
+                nucleonsLocationComboBox,
                 xSizeTextField,
                 ySizeTextField,
                 initializeButton,
