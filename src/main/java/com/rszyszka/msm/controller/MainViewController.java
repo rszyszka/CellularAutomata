@@ -1,5 +1,6 @@
 package com.rszyszka.msm.controller;
 
+import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.InputOutputUtils;
 import com.rszyszka.msm.model.core.Space;
@@ -10,10 +11,7 @@ import com.rszyszka.msm.model.generator.inclusions.InclusionsGenerator;
 import com.rszyszka.msm.model.generator.nucleons.NucleonsGenerator;
 import com.rszyszka.msm.model.generator.nucleons.SRXNucleonsGenerator;
 import com.rszyszka.msm.model.generator.structures.*;
-import com.rszyszka.msm.model.simulation.GrainGrowth;
-import com.rszyszka.msm.model.simulation.MonteCarloGrainGrowth;
-import com.rszyszka.msm.model.simulation.ShapeControlGrainGrowth;
-import com.rszyszka.msm.model.simulation.SimpleGrainGrowth;
+import com.rszyszka.msm.model.simulation.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -210,6 +208,11 @@ public class MainViewController implements Initializable {
                 double gbEnergy = Double.parseDouble(gbEnergyTextField.getText());
                 return new MonteCarloGrainGrowth(space, iterations, gbEnergy);
 
+            case SRX_GRAIN_GROWTH:
+                int iterationsSRX = Integer.parseInt(iterationsTextField.getText());
+                double gbEnergySRX = Double.parseDouble(gbEnergyTextField.getText());
+                return new SRXGrainGrowth(space, iterationsSRX, gbEnergySRX);
+
             default:
                 return new SimpleGrainGrowth(space);
         }
@@ -220,16 +223,21 @@ public class MainViewController implements Initializable {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         for (int i = 0; i < ySize; i++) {
             for (int j = 0; j < xSize; j++) {
-                int id = space.getCell(Coords.coords(j, i)).getId();
+                Cell cell = space.getCell(Coords.coords(j, i));
+                int id = cell.getId();
                 if (id != 0) {
                     if (!colorById.containsKey(id)) {
-                        generateNewColor(id);
+                        if (cell.isRecrystallized()) {
+                            generateRecrystallizedColor(id);
+                        } else {
+                            generateNewColor(id);
+                        }
                     }
                     gc.setFill(colorById.get(id));
                     gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
 
                     if (selectedGrainsById.containsKey(id)) {
-                        gc.setFill(Color.rgb(255, 0, 0, 0.7));
+                        gc.setFill(Color.rgb(255, 255, 0, 0.7));
                         gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
                     }
 
@@ -240,6 +248,19 @@ public class MainViewController implements Initializable {
         }
         enableNodes();
         progressBar.setProgress(0.0);
+    }
+
+
+    private void generateRecrystallizedColor(int id) {
+        Random random = new Random();
+
+        int red = random.nextInt(155) + 100;
+        int green = random.nextInt(30);
+        int blue = random.nextInt(30);
+
+        Color newColor = Color.rgb(red, green, blue);
+
+        colorById.put(id, newColor);
     }
 
 
@@ -526,8 +547,10 @@ public class MainViewController implements Initializable {
                 generateNucleonsButton.setText("Generate");
             }
             if (newValue == SimulationType.SRX_GRAIN_GROWTH) {
+                setMonteCarloControlsManagedProperty(true);
                 nucleonsLocationComboBox.setManaged(true);
             } else {
+                setMonteCarloControlsManagedProperty(false);
                 nucleonsLocationComboBox.setManaged(false);
             }
         });
@@ -579,7 +602,7 @@ public class MainViewController implements Initializable {
     private void initializeMonteCarloControls() {
         iterationsTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                if (!iterationsTextField.getText().matches("[1-9][0-9]+")) {
+                if (!iterationsTextField.getText().matches("[1-9][0-9]*")) {
                     iterationsTextField.setText(String.valueOf(20));
                 }
             }

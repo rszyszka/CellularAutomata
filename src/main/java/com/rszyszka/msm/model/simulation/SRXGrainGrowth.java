@@ -11,28 +11,14 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 
-public class MonteCarloGrainGrowth extends GrainGrowth {
+public class SRXGrainGrowth extends MonteCarloGrainGrowth {
 
-    private int numberOfIterations;
-    private double gbEnergy;
-
-
-    public MonteCarloGrainGrowth(Space space, int numberOfIterations, double gbEnergy) {
-        super(space);
-        this.numberOfIterations = numberOfIterations;
-        this.gbEnergy = gbEnergy;
+    public SRXGrainGrowth(Space space, int numberOfIterations, double gbEnergy) {
+        super(space, numberOfIterations, gbEnergy);
     }
 
 
     @Override
-    public void simulateGrainGrowth() {
-        for (int i = 0; i < numberOfIterations; i++) {
-            updateProgress(i / (double) numberOfIterations);
-            performIteration();
-        }
-    }
-
-
     protected void performIteration() {
         List<Map.Entry<Coords, Cell>> cellByCoordsEntryList = space.getCellsByCoords().entrySet()
                 .stream()
@@ -44,37 +30,37 @@ public class MonteCarloGrainGrowth extends GrainGrowth {
         cellByCoordsEntryList.forEach(randomizedCellByCoords -> {
             List<Cell> neighbours = space.findNeighbours(randomizedCellByCoords.getKey())
                     .stream()
-                    .filter(Cell::isGrowable)
+                    .filter(Cell::isRecrystallized)
                     .collect(Collectors.toList());
             if (neighbours.size() > 0) {
-                performMonteCarloGrowth(neighbours, randomizedCellByCoords.getValue());
+                performSRXGrowth(neighbours, randomizedCellByCoords);
             }
         });
-
     }
 
-
-    private void performMonteCarloGrowth(List<Cell> neighbours, Cell cell) {
+    private void performSRXGrowth(List<Cell> neighbours, Map.Entry<Coords, Cell> cellByCoords) {
         Random random = new Random();
 
-        double currentEnergy = countEnergy(cell.getId(), neighbours);
+        double currentEnergy = countEnergyBeforeSRX(cellByCoords);
         int newId = neighbours.get(random.nextInt(neighbours.size())).getId();
-        double newEnergy = countEnergy(newId, neighbours);
+        double newEnergy = countEnergyAfterSRX(newId, cellByCoords);
 
         if (newEnergy <= currentEnergy) {
+            Cell cell = cellByCoords.getValue();
             cell.setId(newId);
+            cell.setRecrystallized(true);
+            cell.setEnergyH(0.0);
         }
     }
 
+    private double countEnergyBeforeSRX(Map.Entry<Coords, Cell> cellByCoords) {
+        List<Cell> neighbours = space.findNeighbours(cellByCoords.getKey());
+        return super.countEnergy(cellByCoords.getValue().getId(), neighbours) + cellByCoords.getValue().getEnergyH();
+    }
 
-    protected double countEnergy(int id, List<Cell> neighbours) {
-        int count = 0;
-        for (Cell cell : neighbours) {
-            if (cell.getId() != id) {
-                count++;
-            }
-        }
-        return gbEnergy * count;
+    private double countEnergyAfterSRX(int newId, Map.Entry<Coords, Cell> cellByCoords) {
+        List<Cell> neighbours = space.findNeighbours(cellByCoords.getKey());
+        return super.countEnergy(newId, neighbours);
     }
 
 }
