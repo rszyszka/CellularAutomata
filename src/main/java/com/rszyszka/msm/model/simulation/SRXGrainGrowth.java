@@ -1,8 +1,10 @@
 package com.rszyszka.msm.model.simulation;
 
+import com.rszyszka.msm.controller.NucleationType;
 import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
+import com.rszyszka.msm.model.generator.nucleons.SRXNucleonsGenerator;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,8 +15,39 @@ import java.util.stream.Collectors;
 
 public class SRXGrainGrowth extends MonteCarloGrainGrowth {
 
-    public SRXGrainGrowth(Space space, int numberOfIterations, double gbEnergy) {
+    public static NucleationType NUCLEATION_TYPE = NucleationType.AT_START;
+
+    private int nucleonsNumber;
+    private int currentNucleonsNumberToPut;
+
+
+    public SRXGrainGrowth(Space space, int numberOfIterations, double gbEnergy, int nucleonsNumber) {
         super(space, numberOfIterations, gbEnergy);
+        this.nucleonsNumber = nucleonsNumber;
+        currentNucleonsNumberToPut = nucleonsNumber;
+    }
+
+
+    @Override
+    public void simulateGrainGrowth() {
+        for (int i = 1; i <= numberOfIterations; i++) {
+            updateProgress(i / (double) numberOfIterations);
+            performIteration();
+            applyNucleationModuleIfNeeded(i);
+        }
+    }
+
+    private void applyNucleationModuleIfNeeded(int iterationNumber) {
+        if (NUCLEATION_TYPE == NucleationType.CONSTANT) {
+            if (iterationNumber % 3 == 0) {
+                SRXNucleonsGenerator.putNucleons(nucleonsNumber, space);
+            }
+        } else if (NUCLEATION_TYPE == NucleationType.INCREASING) {
+            if (iterationNumber % 3 == 0) {
+                currentNucleonsNumberToPut += nucleonsNumber;
+                SRXNucleonsGenerator.putNucleons(currentNucleonsNumberToPut, space);
+            }
+        }
     }
 
 

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class MonteCarloGrainGrowth extends GrainGrowth {
 
-    private int numberOfIterations;
+    protected int numberOfIterations;
     private double gbEnergy;
 
 

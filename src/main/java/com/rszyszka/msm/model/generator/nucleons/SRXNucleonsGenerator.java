@@ -1,5 +1,6 @@
 package com.rszyszka.msm.model.generator.nucleons;
 
+import com.rszyszka.msm.controller.NucleonsLocation;
 import com.rszyszka.msm.model.core.Cell;
 import com.rszyszka.msm.model.core.Coords;
 import com.rszyszka.msm.model.core.Space;
@@ -12,12 +13,24 @@ import java.util.Random;
 
 public class SRXNucleonsGenerator {
 
-    public static void putNucleonsAnywhere(int number, Space space) {
+    public static NucleonsLocation NUCLEONS_LOCATION = NucleonsLocation.ANYWHERE;
+
+
+    public static void putNucleons(int number, Space space) {
+        if (NUCLEONS_LOCATION == NucleonsLocation.GRAIN_BOUNDARIES) {
+            SRXNucleonsGenerator.putNucleonsOnGrainBoundaries(number, space);
+        } else {
+            SRXNucleonsGenerator.putNucleonsAnywhere(number, space);
+        }
+    }
+
+
+    private static void putNucleonsAnywhere(int number, Space space) {
         putNucleonsInAvailablePlace(number, space, new ArrayList<>(space.getCellsByCoords().keySet()));
     }
 
 
-    public static void putNucleonsOnGrainBoundaries(int number, Space space) {
+    private static void putNucleonsOnGrainBoundaries(int number, Space space) {
         putNucleonsInAvailablePlace(number, space, GeneratorUtils.determineGrainBoundaryCellsCoords(space));
     }
 

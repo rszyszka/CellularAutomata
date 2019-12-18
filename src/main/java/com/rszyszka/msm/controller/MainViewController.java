@@ -114,6 +114,8 @@ public class MainViewController implements Initializable {
     @FXML
     private ComboBox<NucleonsLocation> nucleonsLocationComboBox;
     @FXML
+    private ComboBox<NucleationType> nucleationTypeComboBox;
+    @FXML
     private Button resetSelectionButton;
     @FXML
     private Button clearGrainsButton;
@@ -166,11 +168,7 @@ public class MainViewController implements Initializable {
                 NucleonsGenerator.fillSpaceWithNumberOfUniqueIds(nucleonsNumber, space);
                 break;
             case SRX_GRAIN_GROWTH:
-                if (nucleonsLocationComboBox.getValue() == NucleonsLocation.GRAIN_BOUNDARIES) {
-                    SRXNucleonsGenerator.putNucleonsOnGrainBoundaries(nucleonsNumber, space);
-                } else {
-                    SRXNucleonsGenerator.putNucleonsAnywhere(nucleonsNumber, space);
-                }
+                SRXNucleonsGenerator.putNucleons(nucleonsNumber, space);
                 break;
             default:
                 NucleonsGenerator.putNucleonsRandomly(nucleonsNumber, space);
@@ -211,7 +209,8 @@ public class MainViewController implements Initializable {
             case SRX_GRAIN_GROWTH:
                 int iterationsSRX = Integer.parseInt(iterationsTextField.getText());
                 double gbEnergySRX = Double.parseDouble(gbEnergyTextField.getText());
-                return new SRXGrainGrowth(space, iterationsSRX, gbEnergySRX);
+                int nucleonsNumber = Integer.parseInt(nucleonsNumberTextField.getText());
+                return new SRXGrainGrowth(space, iterationsSRX, gbEnergySRX, nucleonsNumber);
 
             default:
                 return new SimpleGrainGrowth(space);
@@ -516,6 +515,18 @@ public class MainViewController implements Initializable {
         nucleonsLocationComboBox.getSelectionModel().selectFirst();
         nucleonsLocationComboBox.visibleProperty().bind(nucleonsLocationComboBox.managedProperty());
         nucleonsLocationComboBox.setManaged(false);
+
+        nucleationTypeComboBox.setItems(FXCollections.observableArrayList(NucleationType.values()));
+        nucleationTypeComboBox.getSelectionModel().selectFirst();
+        nucleationTypeComboBox.visibleProperty().bind(nucleationTypeComboBox.managedProperty());
+        nucleationTypeComboBox.setManaged(false);
+
+        nucleonsLocationComboBox.valueProperty().addListener((observable, oldValue, newValue) ->
+                SRXNucleonsGenerator.NUCLEONS_LOCATION = newValue
+        );
+        nucleationTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) ->
+                SRXGrainGrowth.NUCLEATION_TYPE = newValue
+        );
     }
 
 
@@ -549,9 +560,10 @@ public class MainViewController implements Initializable {
             if (newValue == SimulationType.SRX_GRAIN_GROWTH) {
                 setMonteCarloControlsManagedProperty(true);
                 nucleonsLocationComboBox.setManaged(true);
+                nucleationTypeComboBox.setManaged(true);
             } else {
-                setMonteCarloControlsManagedProperty(false);
                 nucleonsLocationComboBox.setManaged(false);
+                nucleationTypeComboBox.setManaged(false);
             }
         });
     }
@@ -753,6 +765,7 @@ public class MainViewController implements Initializable {
                 inclusionSizeTextField,
                 inclusionTypeComboBox,
                 nucleonsLocationComboBox,
+                nucleationTypeComboBox,
                 xSizeTextField,
                 ySizeTextField,
                 initializeButton,
