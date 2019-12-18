@@ -26,10 +26,12 @@ public class MonteCarloGrainGrowth extends GrainGrowth {
 
     @Override
     public void simulateGrainGrowth() {
+        space.resetBorderProperty();
         for (int i = 0; i < numberOfIterations; i++) {
             updateProgress(i / (double) numberOfIterations);
             performIteration();
         }
+        space.determineBorderCells();
     }
 
 
